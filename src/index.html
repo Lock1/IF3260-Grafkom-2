@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grafkom K-04_18</title>
+</head>
+<body>
+
+    <!-- Radio button untuk menentukan jenis proyeksi: Orthographic, Oblique, Perspective-->
+    <form action="index.php" method="post">
+        <input type="radio" name="proyeksi" value="orthographic" checked>Orthographic
+        <input type="radio" name="proyeksi" value="oblique">Oblique
+        <input type="radio" name="proyeksi" value="perspective">Perspective
+        <input type="submit" value="Submit">
+    </form>
+
+    <!-- Slider untuk rotasi, translasi, dan scaling -->
+    <form action="index.php" method="post">
+        <input type="range" name="rotasi" min="-180" max="180" value="0">
+        <input type="range" name="translasiX" min="-100" max="100" value="0">
+        <input type="range" name="translasiY" min="-100" max="100" value="0">
+        <input type="range" name="scaling" min="0.1" max="10" value="1">
+        <input type="submit" value="Submit">
+    </form>
+
+    <!-- Slider untuk mengubah jarak kamera view untuk mendekat/menjauh dari model-->
+    <form action="index.php" method="post">
+        <input type="range" name="jarak" min="0" max="100" value="0">
+        <input type="submit" value="Submit">
+    </form>
+
+    <!-- Tombol reset ke default view -->
+    <form action="index.php" method="post">
+        <input type="submit" name="reset" value="Reset">
+    </form>
+
+    <!-- Tombol menu help yang menampilkan alert help -->
+    <form action="index.php" method="post">
+        <input type="submit" name="help" value="Help">
+    </form>
+
+    <!-- Tombol untuk menghidupkan/mematikan shading -->
+    <form action="index.php" method="post">
+        <input type="submit" name="shading" value="Shading">
+    </form>
+</body>
+</html>
