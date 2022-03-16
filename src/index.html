@@ -7,7 +7,7 @@
     <title>Grafkom K-04_18</title>
 </head>
 <body>
-
+    <canvas id="c" height="600" width="800"></canvas>
     <!-- Radio button untuk menentukan jenis proyeksi: Orthographic, Oblique, Perspective-->
     <form action="index.php" method="post">
         <input type="radio" name="proyeksi" value="orthographic" checked>Orthographic
@@ -45,5 +45,35 @@
     <form action="index.php" method="post">
         <input type="submit" name="shading" value="Shading">
     </form>
+
+    <!-- vertex shader -->
+    <script  id="vertex-shader-3d" type="x-shader/x-vertex">
+        attribute vec4 a_position;
+        attribute vec4 a_color;
+        
+        uniform mat4 u_matrix;
+        
+        varying vec4 v_color;
+        
+        void main() {
+        // Multiply the position by the matrix.
+        gl_Position = a_position;
+        
+        // Pass the color to the fragment shader.
+        v_color = a_color;
+        }
+    </script>
+    <!-- fragment shader -->
+    <script  id="fragment-shader-3d" type="x-shader/x-fragment">
+        precision mediump float;
+        
+        // Passed in from the vertex shader.
+        varying vec4 v_color;
+        
+        void main() {
+        gl_FragColor = v_color;
+        }
+    </script>
+    <script src="./tetrahedral/tetrahedral-ortographic.js"></script>
 </body>
 </html>
