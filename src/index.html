@@ -1,49 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <title>Grafkom K-04_18</title>
 </head>
+
 <body>
 
+    <!-- Canvas -->
+    <canvas id="canvas" width="720" height="520"></canvas>
+
+    <br>
+
+    <!-- radio button untuk memilih bentuk: Cube, Tetrahedral, Prism -->
+    <div>
+        <label for="bentuk">Jenis bentuk:</label>
+        <input type="radio" name="bentuk" value="cube" checked>Kubus
+        <input type="radio" name="bentuk" value="tetrahedral">Tetrahedral
+        <input type="radio" name="bentuk" value="prism">Prisma
+    </div>
+
+    <br>
+
     <!-- Radio button untuk menentukan jenis proyeksi: Orthographic, Oblique, Perspective-->
-    <form action="index.php" method="post">
+    <div>
+        <label for="proyeksi">Jenis proyeksi:</label>
         <input type="radio" name="proyeksi" value="orthographic" checked>Orthographic
         <input type="radio" name="proyeksi" value="oblique">Oblique
         <input type="radio" name="proyeksi" value="perspective">Perspective
-        <input type="submit" value="Submit">
-    </form>
+    </div>
+
+    <br>
 
     <!-- Slider untuk rotasi, translasi, dan scaling -->
-    <form action="index.php" method="post">
-        <input type="range" name="rotasi" min="-180" max="180" value="0">
-        <input type="range" name="translasiX" min="-100" max="100" value="0">
-        <input type="range" name="translasiY" min="-100" max="100" value="0">
-        <input type="range" name="scaling" min="0.1" max="10" value="1">
-        <input type="submit" value="Submit">
-    </form>
+    <div>
+        <label for="rotasiX">Rotasi X:</label>
+        <input type="range" name="rotasiX" min="-180" max="180" value="0"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+
+        <label for="rotasiY">Rotasi Y:</label>
+        <input type="range" name="rotasiY" min="-180" max="180" value="0"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="translasiX">Translasi X:</label>
+        <input type="range" name="translasiX" min="-100" max="100" value="0"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+
+        <label for="translasiY">Translasi Y:</label>
+        <input type="range" name="translasiY" min="-100" max="100" value="0"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="translasiX">Scale X:</label>
+        <input type="range" name="scalingX" min="0.1" max="10" value="1"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+
+        <label for="translasiY">Scale Y:</label>
+        <input type="range" name="scalingY" min="0.1" max="10" value="1"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+    </div>
+
+    <br>
 
     <!-- Slider untuk mengubah jarak kamera view untuk mendekat/menjauh dari model-->
-    <form action="index.php" method="post">
-        <input type="range" name="jarak" min="0" max="100" value="0">
-        <input type="submit" value="Submit">
-    </form>
+    <div>
+        <label for="jarak">Jarak Kamera:</label>
+        <input type="range" name="jarak" min="0" max="100" value="0"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+    </div>
 
-    <!-- Tombol reset ke default view -->
-    <form action="index.php" method="post">
-        <input type="submit" name="reset" value="Reset">
-    </form>
-
-    <!-- Tombol menu help yang menampilkan alert help -->
-    <form action="index.php" method="post">
-        <input type="submit" name="help" value="Help">
-    </form>
+    <br>
 
     <!-- Tombol untuk menghidupkan/mematikan shading -->
-    <form action="index.php" method="post">
-        <input type="submit" name="shading" value="Shading">
-    </form>
+    <div>
+        <label for="shading">Shading: </label>
+        <input type="checkbox" name="shading" value="shading" checked>
+    </div>
+
+    <br>
+
+    <!-- Tombol reset ke default view -->
+    <div>
+        <input type="submit" name="reset" value="Reset">
+    </div>
+
+    <br>
+
+    <!-- Tombol menu help yang menampilkan alert help -->
+    <div>
+        <input type="submit" name="help" onclick="window.open('./help.html','_blank')" value="Help">
+    </div>
+
+    <br>
+
+    <!-- vertex-shader-3d -->
+    <script id="vertex-shader-3d-cube" type="x-shader/x-vertex">
+        attribute vec3 coordinates;
+        uniform mat4 transformationMatrix;
+        varying float colorFactor;
+        void main() {
+            vec4 transformedPosition = vec4(coordinates.xy, coordinates.z * -1.0, 1.0) * transformationMatrix;
+            gl_Position = transformedPosition;
+            colorFactor = min(max((1.0 - transformedPosition.z) / 2.0, 0.0), 1.0);
+        }
+    </script>
+    <!-- fragment-shader-3d -->
+    <script id="fragment-shader-3d-cube" type="x-shader/x-fragment">
+        precision mediump float;
+        uniform vec3 userColor;
+        varying float colorFactor;
+        void main(void) {
+            gl_FragColor = vec4(userColor * colorFactor, 1.0);
+        }
+    </script>
+    <script src="cube/script.js" type="module"></script>
+
 </body>
+
 </html>
