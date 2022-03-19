@@ -1,52 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <title>Grafkom K-04_18</title>
 </head>
+
 <body>
 
+    <!-- Canvas -->
+    <canvas id="canvas" width="720" height="520"></canvas>
+
     <!-- Radio button untuk menentukan jenis proyeksi: Orthographic, Oblique, Perspective-->
-    <form action="index.php" method="post">
+    <div>
+        <label for="proyeksi">Jenis proyeksi:</label>
         <input type="radio" name="proyeksi" value="orthographic" checked>Orthographic
         <input type="radio" name="proyeksi" value="oblique">Oblique
         <input type="radio" name="proyeksi" value="perspective">Perspective
-        <input type="submit" value="Submit">
-    </form>
+    </div>
+
+    <br>
 
     <!-- Slider untuk rotasi, translasi, dan scaling -->
-    <form action="index.php" method="post">
-        <input type="range" name="rotasi" min="-180" max="180" value="0">
-        <input type="range" name="translasiX" min="-100" max="100" value="0">
-        <input type="range" name="translasiY" min="-100" max="100" value="0">
-        <input type="range" name="scaling" min="0.1" max="10" value="1">
-        <input type="submit" value="Submit">
-    </form>
+    <div>
+        <label for="rotasiX">Rotasi X:</label>
+        <input type="range" name="rotasiX" min="-180" max="180" value="0"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+
+        <label for="rotasiY">Rotasi Y:</label>
+        <input type="range" name="rotasiY" min="-180" max="180" value="0"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="translasiX">Tranlasi X:</label>
+        <input type="range" name="translasiX" min="-100" max="100" value="0"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+
+        <label for="translasiY">Translasi Y:</label>
+        <input type="range" name="translasiY" min="-100" max="100" value="0"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="translasiX">Scale X:</label>
+        <input type="range" name="scalingX" min="0.1" max="10" value="1"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+
+        <label for="translasiY">Scale Y:</label>
+        <input type="range" name="scalingY" min="0.1" max="10" value="1"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+    </div>
+
+    <br>
 
     <!-- Slider untuk mengubah jarak kamera view untuk mendekat/menjauh dari model-->
-    <form action="index.php" method="post">
-        <input type="range" name="jarak" min="0" max="100" value="0">
+    <div>
+        <label for="jarak">Jarak Kamera:</label>
+        <input type="range" name="jarak" min="0" max="100" value="0"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
         <input type="submit" value="Submit">
-    </form>
+    </div>
 
-    <!-- Tombol reset ke default view -->
-    <form action="index.php" method="post">
-        <input type="submit" name="reset" value="Reset">
-    </form>
-
-    <!-- Tombol menu help yang menampilkan alert help -->
-    <form action="index.php" method="post">
-        <input type="submit" name="help" value="Help">
-    </form>
+    <br>
 
     <!-- Tombol untuk menghidupkan/mematikan shading -->
-    <form action="index.php" method="post">
-        <input type="submit" name="shading" value="Shading">
-    </form>
+    <div>
+        <label for="shading">Shading</label>
+        <input type="checkbox" name="shading" value="shading" checked>
+    </div>
 
-    <!-- Canvas -->
-    <canvas id="canvas" width="500" height="500"></canvas>
+    <br>
+
+    <!-- Tombol reset ke default view -->
+    <div>
+        <input type="submit" name="reset" value="Reset">
+    </div>
+
+    <br>
+
+    <!-- Tombol menu help yang menampilkan alert help -->
+    <div>
+        <input type="submit" name="help" onclick="window.open('./help.html','_blank')" value="Help">
+    </div>
+
+    <br>
+
+    <!-- vertex-shader-3d -->
+    <script id="vertex-shader-3d" type="x-shader/x-vertex">
+        attribute vec3 position;
+        attribute vec3 normal;
+        attribute vec2 uv;
+
+        uniform mat4 modelMatrix;
+        uniform mat4 viewMatrix;
+        uniform mat4 projectionMatrix;
+
+        varying vec3 vNormal;
+        varying vec2 vUv;
+
+        void main() {
+            vNormal = normal;
+            vUv = uv;
+            gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+        }
+    </script>
+    <!-- fragment-shader-3d -->
+    <script id="fragment-shader-3d" type="x-shader/x-fragment">
+        precision mediump float;
+
+        uniform vec3 lightPosition;
+        uniform vec3 lightColor;
+        uniform vec3 objectColor;
+        uniform bool shading;
+
+        varying vec3 vNormal;
+        varying vec2 vUv;
+
+        void main() {
+            vec3 normal = normalize(vNormal);
+            vec3 light = normalize(lightPosition - vec3(0.0, 0.0, 0.0));
+            float diffuse = max(dot(normal, light), 0.0);
+            vec3 color = objectColor * lightColor * diffuse;
+            if (shading) {
+                gl_FragColor = vec4(color, 1.0);
+            } else {
+                gl_FragColor = vec4(vec3(0.5, 0.5, 0.5), 1.0);
+            }
+        }
+    </script>
+    <script src="cube/script.js"></script>
+
 </body>
+
 </html>
