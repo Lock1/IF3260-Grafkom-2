@@ -1,0 +1,25 @@
+* {
+    /* Bright colours for the text */
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+}
+
+canvas {
+    display: block;
+    margin: 0 auto;
+    background: #000;
+}
+
+input {
+    /* Dark text on light background */
+    color: #000;
+}
+
+body {
+    /* dark background so that the text is readable */
+    background-color: #2c2c2c;
+}
+
+div {
+    padding-left: 20px;
+}
