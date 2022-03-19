@@ -20,6 +20,16 @@
 
     <br>
 
+    <!-- radio button untuk memilih bentuk: Cube, Tetrahedral, Prism -->
+    <div>
+        <label for="bentuk">Jenis bentuk:</label>
+        <input type="radio" name="bentuk" value="cube" checked>Kubus
+        <input type="radio" name="bentuk" value="tetrahedral">Tetrahedral
+        <input type="radio" name="bentuk" value="prism">Prisma
+    </div>
+
+    <br>
+
     <!-- Radio button untuk menentukan jenis proyeksi: Orthographic, Oblique, Perspective-->
     <div>
         <label for="proyeksi">Jenis proyeksi:</label>
@@ -107,48 +117,25 @@
 
     <!-- vertex-shader-3d -->
     <script id="vertex-shader-3d" type="x-shader/x-vertex">
-        attribute vec3 position;
-        attribute vec3 normal;
-        attribute vec2 uv;
-
-        uniform mat4 modelMatrix;
-        uniform mat4 viewMatrix;
-        uniform mat4 projectionMatrix;
-
-        varying vec3 vNormal;
-        varying vec2 vUv;
-
+        attribute vec3 coordinates;
+        uniform mat4 transformationMatrix;
+        varying float colorFactor;
         void main() {
-            vNormal = normal;
-            vUv = uv;
-            gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+            vec4 transformedPosition = vec4(coordinates.xy, coordinates.z * -1.0, 1.0) * transformationMatrix;
+            gl_Position = transformedPosition;
+            colorFactor = min(max((1.0 - transformedPosition.z) / 2.0, 0.0), 1.0);
         }
     </script>
     <!-- fragment-shader-3d -->
     <script id="fragment-shader-3d" type="x-shader/x-fragment">
         precision mediump float;
-
-        uniform vec3 lightPosition;
-        uniform vec3 lightColor;
-        uniform vec3 objectColor;
-        uniform bool shading;
-
-        varying vec3 vNormal;
-        varying vec2 vUv;
-
-        void main() {
-            vec3 normal = normalize(vNormal);
-            vec3 light = normalize(lightPosition - vec3(0.0, 0.0, 0.0));
-            float diffuse = max(dot(normal, light), 0.0);
-            vec3 color = objectColor * lightColor * diffuse;
-            if (shading) {
-                gl_FragColor = vec4(color, 1.0);
-            } else {
-                gl_FragColor = vec4(vec3(0.5, 0.5, 0.5), 1.0);
-            }
+        uniform vec3 userColor;
+        varying float colorFactor;
+        void main(void) {
+            gl_FragColor = vec4(userColor * colorFactor, 1.0);
         }
     </script>
-    <script src="cube/script.js"></script>
+    <script src="cube/script.js" type="module"></script>
 
 </body>
 
