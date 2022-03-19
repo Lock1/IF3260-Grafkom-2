@@ -14,12 +14,12 @@ function main() {
     }
 
     // Create vertex shader
-    var vertCode = document.getElementById('vertex-shader-3d').textContent;
+    var vertCode = document.getElementById('vertex-shader-3d-cube').textContent;
 
     var vertShader = shaderCreator(gl, gl.VERTEX_SHADER, vertCode);
 
     // Create fragment shader
-    var fragCode = document.getElementById('fragment-shader-3d').textContent;
+    var fragCode = document.getElementById('fragment-shader-3d-cube').textContent;
 
     var fragShader = shaderCreator(gl, gl.FRAGMENT_SHADER, fragCode);
 

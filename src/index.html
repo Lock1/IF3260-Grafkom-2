@@ -116,7 +116,7 @@
     <br>
 
     <!-- vertex-shader-3d -->
-    <script id="vertex-shader-3d" type="x-shader/x-vertex">
+    <script id="vertex-shader-3d-cube" type="x-shader/x-vertex">
         attribute vec3 coordinates;
         uniform mat4 transformationMatrix;
         varying float colorFactor;
@@ -127,7 +127,7 @@
         }
     </script>
     <!-- fragment-shader-3d -->
-    <script id="fragment-shader-3d" type="x-shader/x-fragment">
+    <script id="fragment-shader-3d-cube" type="x-shader/x-fragment">
         precision mediump float;
         uniform vec3 userColor;
         varying float colorFactor;
