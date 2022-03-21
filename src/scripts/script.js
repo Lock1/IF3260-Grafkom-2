@@ -1,37 +1,20 @@
 import { translationMatrix, scaleMatrix, matrixMult, rotationMatrix } from './math.js'
-import { shaderCreator, createProgram } from './utils.js'
+// import { shaderCreator, createProgram } from './utils.js'
+import { webglCreateShaderProgram } from './utils.js'
 import { getHollowCube, getModelFromObjFile } from './model.js'
 
 function main() {
-    var currentMatrix = translationMatrix(0, 0);
     const canvas = document.getElementById('canvas');
-    const gl = canvas.getContext('webgl');
+    const gl     = canvas.getContext('webgl');
 
     if (!gl) {
-        alert('Unable to initialize WebGL. Your browser or machine may not support it.');
+        alert('Browsermu jelek');
         return;
     }
 
-    // Create vertex shader
-    var vertCode = document.getElementById('vertex-shader-3d-cube').textContent;
-
-    var vertShader = shaderCreator(gl, gl.VERTEX_SHADER, vertCode);
-
-    // Create fragment shader
-    var fragCode = document.getElementById('fragment-shader-3d-cube').textContent;
-
-    var fragShader = shaderCreator(gl, gl.FRAGMENT_SHADER, fragCode);
-
-    // Create program
-    var shaderProgram = createProgram(gl, vertShader, fragShader);
-
-    // Check the shader program
-    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-        alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
-        return;
-    }
-
+    var shaderProgram = webglCreateShaderProgram(gl, 'vertex-shader-3d-cube', 'fragment-shader-3d-cube');
     gl.useProgram(shaderProgram);
+
 
     // Create vertex buffer
     var vertexBuffer = gl.createBuffer();
@@ -52,6 +35,7 @@ function main() {
     gl.vertexAttribPointer(coord, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(coord);
 
+    var currentMatrix = translationMatrix(0, 0);
     var translationMatrixLoc = gl.getUniformLocation(shaderProgram, "transformationMatrix");
     gl.uniformMatrix4fv(translationMatrixLoc, false, new Float32Array(currentMatrix));
 

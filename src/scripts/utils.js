@@ -1,4 +1,4 @@
-export function shaderCreator(gl, type, source) {
+function shaderCreator(gl, type, source) {
     var shader = gl.createShader(type)
     gl.shaderSource(shader, source)
     gl.compileShader(shader)
@@ -8,7 +8,7 @@ export function shaderCreator(gl, type, source) {
     return shader
 }
 
-export function createProgram(gl, vertexShader, fragmentShader) {
+function createProgram(gl, vertexShader, fragmentShader) {
     var program = gl.createProgram()
     gl.attachShader(program, vertexShader)
     gl.attachShader(program, fragmentShader)
@@ -17,4 +17,20 @@ export function createProgram(gl, vertexShader, fragmentShader) {
         throw new Error(gl.getProgramInfoLog(program))
     }
     return program
+}
+
+export function webglCreateShaderProgram(gl, vShaderID, fShaderID) {
+    var vertCode   = document.getElementById(vShaderID).textContent;
+    var vertShader = shaderCreator(gl, gl.VERTEX_SHADER, vertCode);
+
+    var fragCode   = document.getElementById(fShaderID).textContent;
+    var fragShader = shaderCreator(gl, gl.FRAGMENT_SHADER, fragCode);
+
+    var shaderProgram = createProgram(gl, vertShader, fragShader)
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+        alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
+        return;
+    }
+
+    return shaderProgram;
 }
