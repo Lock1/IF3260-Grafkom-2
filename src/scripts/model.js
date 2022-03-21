@@ -1,3 +1,36 @@
+export function getCube() {
+    var model = {
+        vertices : [
+            1.000000 , 1.000000  , -1.000000,
+            1.000000 , -1.000000 ,  -1.000000,
+            1.000000 , 1.000000  ,  1.000000,
+            1.000000 , -1.000000 ,  1.000000,
+            -1.000000,  1.000000 ,  -1.000000,
+            -1.000000,  -1.000000,  -1.000000,
+            -1.000000,  1.000000 , 1.000000,
+            -1.000000,  -1.000000,  1.000000,
+        ],
+        indices  : [
+
+        ],
+        numPoints: 36
+    }
+    function ind(idx1, idx2, idx3, idx4) {
+        // Forming quadrilateral
+        model.indices.push(idx1); model.indices.push(idx2); model.indices.push(idx3);
+        model.indices.push(idx3); model.indices.push(idx4); model.indices.push(idx1);
+    }
+
+    ind(0, 4, 6, 2);
+    ind(3, 2, 6, 7);
+    ind(7, 6, 4, 5);
+    ind(5, 1, 3, 7);
+    ind(1, 0, 2, 3);
+    ind(5, 4, 0, 1);
+
+    return model;
+}
+
 export function getHollowCube() {
     // Helper
     function concatQuadIndices(idx1, idx2, idx3, idx4) {
@@ -98,38 +131,97 @@ export function getHollowCube() {
         indices  : indices,
         numPoints: numPoints
     }
-    return model
-}
-
-export function getModelFromObjFile(e) {
-    var model;
-    var file = e.target.files[0];
-    if (!file) {
-        console.log("File not found");
-        return;
-    }
-
-    var reader    = new FileReader();
-    reader.onload = function(e) {
-      model = parserObjFile(e.target.result);
-    };
-    reader.readAsText(file);
-
     return model;
 }
 
-function parserObjFile(file) {
-    function concatQuadrilateralIndices(idx1, idx2, idx3, idx4) {
-        indices.push(idx1); indices.push(idx2); indices.push(idx3);
-        indices.push(idx3); indices.push(idx4); indices.push(idx1);
-        numPoints += 6;
-    }
-    function concatTriangleIndices(idx1, idx2, idx3) {
-        indices.push(idx1); indices.push(idx2); indices.push(idx3);
-        numPoints += 3;
-    }
 
 
-    var model;
-    console.log(file);
+export function parserObjFile(file) {
+    // Internal helper function
+    function concatQuadrilateralIndices(arr) {
+        model.indices.push(arr[0]); model.indices.push(arr[1]); model.indices.push(arr[2]);
+        model.indices.push(arr[2]); model.indices.push(arr[3]); model.indices.push(arr[0]);
+        model.numPoints += 6;
+    }
+    function concatTriangleIndices(arr) {
+        model.indices.push(arr[0]); model.indices.push(arr[1]); model.indices.push(arr[2]);
+        model.numPoints += 3;
+    }
+
+    // Parser helper function
+    function getFirstToken(str) {
+        var token = "";
+        var i     = 0;
+
+        while (i < str.length && str[i] != ' ')
+            token = token + str[i++];
+        return token;
+    }
+    function parseVertex(str) {
+        var raw_data_str = str.substr(2, str.length);
+        var vertex       = [];
+
+        vertex.push(parseFloat(raw_data_str));
+        raw_data_str = raw_data_str.substr(raw_data_str.indexOf(' '), raw_data_str.length);
+        vertex.push(parseFloat(raw_data_str));
+        raw_data_str = raw_data_str.substr(raw_data_str.indexOf(' '), raw_data_str.length);
+        vertex.push(parseFloat(raw_data_str));
+
+        return vertex;
+    }
+    function parseSurface(str) {
+        var raw_data_str = str.substr(2, str.length);
+        var temp_indices = [];
+
+        var temp_str_int = "";
+        var ignore_token = false;
+
+        for (var i = 0; i < raw_data_str.length; i++) {
+            var number_char = !isNaN(parseInt(raw_data_str[i]));
+
+            if (raw_data_str[i] == ' ')
+                ignore_token = false;
+            else if (!ignore_token && number_char)
+                temp_str_int = temp_str_int + raw_data_str[i];
+            else if (!ignore_token && !number_char) {
+                if (temp_str_int.length)
+                    temp_indices.push(parseInt(temp_str_int));
+                temp_str_int = "";
+                ignore_token = true;
+            }
+        }
+
+        // WebGL indexing range [0, len-1], .obj [1, len]
+        temp_indices.forEach((item, i) => {temp_indices[i] = item - 1;});
+
+        if (temp_indices.length == 4)
+            concatQuadrilateralIndices(temp_indices);
+        else
+            concatTriangleIndices(temp_indices);
+    }
+
+    var model = {
+        vertices : [],
+        indices  : [],
+        numPoints: 0
+    };
+
+    var temp_line = "";
+    for (var i = 0; i < file.length; i++) {
+        // Get line
+        if (file[i] != '\n')
+            temp_line = temp_line + file[i];
+        else {
+            var first_token = getFirstToken(temp_line);
+
+            if (first_token == "v")
+                model.vertices = model.vertices.concat(parseVertex(temp_line));
+            else if (first_token == "f")
+                parseSurface(temp_line);
+
+            temp_line = "";
+        }
+    }
+
+    return model;
 }
