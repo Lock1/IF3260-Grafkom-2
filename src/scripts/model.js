@@ -101,10 +101,35 @@ export function getHollowCube() {
     return model
 }
 
-export function getModelFromObjFile(filename) {
+export function getModelFromObjFile(e) {
+    var model;
+    var file = e.target.files[0];
+    if (!file) {
+        console.log("File not found");
+        return;
+    }
 
+    var reader    = new FileReader();
+    reader.onload = function(e) {
+      model = parserObjFile(e.target.result);
+    };
+    reader.readAsText(file);
+
+    return model;
 }
 
-function parserObjFile(filename) {
+function parserObjFile(file) {
+    function concatQuadrilateralIndices(idx1, idx2, idx3, idx4) {
+        indices.push(idx1); indices.push(idx2); indices.push(idx3);
+        indices.push(idx3); indices.push(idx4); indices.push(idx1);
+        numPoints += 6;
+    }
+    function concatTriangleIndices(idx1, idx2, idx3) {
+        indices.push(idx1); indices.push(idx2); indices.push(idx3);
+        numPoints += 3;
+    }
 
+
+    var model;
+    console.log(file);
 }

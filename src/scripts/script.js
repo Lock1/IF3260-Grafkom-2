@@ -19,11 +19,11 @@ function main() {
     // TODO : Update
     var model     = getHollowCube();
 
-    // -- Idle animation parameter --
+    // Idle animation parameter
     // Asumsi requestAnimationFrame hingga 60 calls per sec
     var rot_increment = [Math.PI / 180 * (1 / 60) * 5, Math.PI / 180 * (1 / 60) * 2, 0];
 
-    // -- Initial transformation matrix --
+    // Initial transformation matrix
     var transformMatrix = getInitialTransformMatrix();
 
     // -- Ritual WebGL Create Program --
@@ -85,4 +85,5 @@ function main() {
     }
 }
 
-main()
+document.getElementById('obj-input').addEventListener('change', getModelFromObjFile, false);
+main();
