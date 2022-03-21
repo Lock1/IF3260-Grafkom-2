@@ -20,6 +20,8 @@
 
     <br>
 
+    <h2>Bentuk</h2>
+
     <!-- radio button untuk memilih bentuk: Cube, Tetrahedral, Prism -->
     <div>
         <label for="bentuk">Jenis bentuk:</label>
@@ -30,6 +32,8 @@
 
     <br>
 
+    <h2>Proyeksi</h2>
+
     <!-- Radio button untuk menentukan jenis proyeksi: Orthographic, Oblique, Perspective-->
     <div>
         <label for="proyeksi">Jenis proyeksi:</label>
@@ -39,6 +43,8 @@
     </div>
 
     <br>
+
+    <h2>Rotasi, Translasi, Penskalaan</h2>
 
     <!-- Slider untuk rotasi, translasi, dan scaling -->
     <div>
@@ -83,15 +89,59 @@
 
     <br>
 
+    <h2>Setelan Kamera</h2>
+
     <!-- Slider untuk mengubah jarak kamera view untuk mendekat/menjauh dari model-->
     <div>
-        <label for="jarak">Jarak Kamera:</label>
-        <input type="range" name="jarak" min="0" max="100" value="0"
+        <label for="eye-x">Eye-X:</label>
+        <input type="range" name="eye-x" min="0" max="50" value="0"
             oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+
+        <label for="eye-y">Eye-Y:</label>
+        <input type="range" name="eye-y" min="0" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+
+        <label for="eye-z">Eye-Z:</label>
+        <input type="range" name="eye-z" min="0" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
         <output>0</output>
     </div>
 
     <br>
+
+    <div>
+        <label for="up-x">Up-X:</label>
+        <input type="range" name="up-x" min="0" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+        
+        <label for="up-y">Up-Y:</label>
+        <input type="range" name="up-y" min="0" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+        
+        <label for="up-z">Up-Z:</label>
+        <input type="range" name="up-z" min="0" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="center-x">Center-X:</label>
+        <input type="range" name="center-x" min="0" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+    
+        <label for="center-y">Center-Y:</label>
+        <input type="range" name="center-y" min="0" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+    
+        <label for="center-z">Center-Z:</label>
+        <input type="range" name="center-z" min="0" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+    </div>
+
+    <br>
+
+    <h2>Tombol Utilitas</h2>
 
     <!-- Tombol untuk menghidupkan/mematikan shading -->
     <div>
