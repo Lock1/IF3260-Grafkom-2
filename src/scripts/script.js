@@ -91,6 +91,7 @@ function main() {
     // Add listener for slider change in eye-x position
     document.getElementById("eye-x").oninput = function () {
         // print the value of the input
+        this.nextElementSibling.value = this.value;
         eye[0] = parseFloat(this.value);
         render();
         console.log(eye[0]);
@@ -98,6 +99,7 @@ function main() {
 
     document.getElementById("eye-y").oninput = function () {
         // print the value of the input
+        this.nextElementSibling.value = this.value;
         eye[1] = parseFloat(this.value);
         render();
         console.log(eye[1]);
@@ -105,6 +107,7 @@ function main() {
 
     document.getElementById("eye-z").oninput = function () {
         // print the value of the input
+        this.nextElementSibling.value = this.value;
         eye[2] = parseFloat(this.value);
         render();
         console.log(eye[2]);
@@ -112,6 +115,7 @@ function main() {
 
     document.getElementById("center-x").oninput = function () {
         // print the value of the input
+        this.nextElementSibling.value = this.value;
         center[0] = parseFloat(this.value);
         render();
         console.log(center[0]);
@@ -119,6 +123,7 @@ function main() {
 
     document.getElementById("center-y").oninput = function () {
         // print the value of the input
+        this.nextElementSibling.value = this.value;
         center[1] = parseFloat(this.value);
         render();
         console.log(center[1]);
@@ -126,6 +131,7 @@ function main() {
 
     document.getElementById("center-z").oninput = function () {
         // print the value of the input
+        this.nextElementSibling.value = this.value;
         center[2] = parseFloat(this.value);
         render();
         console.log(center[2]);
@@ -133,6 +139,7 @@ function main() {
 
     document.getElementById("up-x").oninput = function () {
         // print the value of the input
+        this.nextElementSibling.value = this.value;
         up[0] = parseFloat(this.value);
         render();
         console.log(up[0]);
@@ -140,6 +147,7 @@ function main() {
 
     document.getElementById("up-y").oninput = function () {
         // print the value of the input
+        this.nextElementSibling.value = this.value;
         up[1] = parseFloat(this.value);
         render();
         console.log(up[1]);
@@ -147,6 +155,7 @@ function main() {
 
     document.getElementById("up-z").oninput = function () {
         // print the value of the input
+        this.nextElementSibling.value = this.value;
         up[2] = parseFloat(this.value);
         render();
         console.log(up[2]);
