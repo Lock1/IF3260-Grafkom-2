@@ -169,10 +169,17 @@
 
     <!-- vertex-shader-3d -->
     <script id="vertex-shader-3d-cube" type="x-shader/x-vertex">
+        attribute vec4 aVertexPosition;
         attribute vec3 coordinates;
+
         uniform mat4 transformationMatrix;
+        uniform mat4 uNormalMatrix;
+        uniform mat4 uModelViewMatrix;
+        uniform mat4 uProjectionMatrix;
+
         varying float colorFactor;
         void main() {
+            gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
             vec4 transformedPosition = vec4(coordinates.xy, coordinates.z * -1.0, 1.0) * transformationMatrix;
             gl_Position = transformedPosition;
             colorFactor = min(max((1.0 - transformedPosition.z) / 2.0, 0.0), 1.0);

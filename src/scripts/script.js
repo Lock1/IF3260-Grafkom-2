@@ -140,6 +140,9 @@ function main() {
     }
 
     var shaderProgram = webglCreateShaderProgram(gl, 'vertex-shader-3d-cube', 'fragment-shader-3d-cube');
+
+    var initmodelViewMatrix = gl.getUniformLocation(shaderProgram, 'uModelViewMatrix')
+
     gl.useProgram(shaderProgram);
 
     // -- Create buffer & pointer --
@@ -189,10 +192,12 @@ function main() {
 
         // Compute matrix for the model
         var modelMatrix = m4.identity();
-        modelMatrix = m4.xRotate(modelMatrix, Math.PI / 2);
-        modelMatrix = m4.yRotate(modelMatrix, Math.PI / 2);
-        modelMatrix = m4.zRotate(modelMatrix, Math.PI / 2);
         var modelViewMatrix = m4.multiply(viewMatrix, modelMatrix);
+
+        gl.uniformMatrix4fv(
+            initmodelViewMatrix,
+            false,
+            modelViewMatrix);
 
         // Draw
         gl.drawElements(gl.TRIANGLES, model.numPoints, gl.UNSIGNED_SHORT, 0);
