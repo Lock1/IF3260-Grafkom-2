@@ -6,7 +6,7 @@ export function matrixMult(m1, m2) {
         for (var j = 0; j < 4; j++) {
             currElm = 0;
             for (var k = 0; k < 4; k++) {
-                currElm += m1[4 * i + k] * m2[4 * k + j];
+                currElm += m2[4 * i + k] * m1[4 * k + j];
             }
             m3.push(currElm);
         }
@@ -14,12 +14,21 @@ export function matrixMult(m1, m2) {
     return m3;
 }
 
-export const translationMatrix = (x, y) => {
+export const projectionMatrix = (gl) => {
+  return [
+    2 / gl.canvas.clientWidth, 0, 0, 0,
+    0, 2 / gl.canvas.clientHeight, 0, 0,
+    0, 0, 2 / 400, 0,
+    -1, 1, 0, 1
+  ];
+}
+
+export const translationMatrix = (x, y, z) => {
     return [
-        1, 0, 0, x,
-        0, 1, 0, y,
+        1, 0, 0, 0,
+        0, 1, 0, 0,
         0, 0, 1, 0,
-        0, 0, 0, 1
+        x, y, z, 1
     ];
 };
 

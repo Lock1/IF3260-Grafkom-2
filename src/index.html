@@ -49,14 +49,22 @@
     <h2>Rotasi, Translasi, Penskalaan</h2>
 
     <!-- Slider untuk rotasi, translasi, dan scaling -->
+    <script>
+        
+    </script>
     <div>
         <label for="rotasiX">Rotasi X:</label>
-        <input type="range" name="rotasiX" min="-180" max="180" value="0"
+        <input type="range" name="rotasiX" min="-180" max="180" value="0" id="rotasiX"
             oninput="this.nextElementSibling.value = this.value">
         <output>0</output>
 
         <label for="rotasiY">Rotasi Y:</label>
-        <input type="range" name="rotasiY" min="-180" max="180" value="0"
+        <input type="range" name="rotasiY" min="-180" max="180" value="0" id="rotasiY"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+
+        <label for="rotasiZ">Rotasi Z:</label>
+        <input type="range" name="rotasiZ" min="-180" max="180" value="0" id="rotasiZ"
             oninput="this.nextElementSibling.value = this.value">
         <output>0</output>
     </div>
@@ -65,12 +73,17 @@
 
     <div>
         <label for="translasiX">Translasi X:</label>
-        <input type="range" name="translasiX" min="-100" max="100" value="0"
+        <input type="range" name="translasiX" min="-100" max="100" value="0" id="translasiX"
             oninput="this.nextElementSibling.value = this.value">
         <output>0</output>
 
         <label for="translasiY">Translasi Y:</label>
-        <input type="range" name="translasiY" min="-100" max="100" value="0"
+        <input type="range" name="translasiY" min="-100" max="100" value="0" id="translasiY"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+
+        <label for="translasiZ">Translasi Y:</label>
+        <input type="range" name="translasiZ" min="-100" max="100" value="0" id="translasiZ"
             oninput="this.nextElementSibling.value = this.value">
         <output>0</output>
     </div>
@@ -78,13 +91,18 @@
     <br>
 
     <div>
-        <label for="translasiX">Scale X:</label>
-        <input type="range" name="scalingX" min="0.1" max="10" value="1"
+        <label for="scalingX">Scale X:</label>
+        <input type="range" name="scalingX" min="0.1" max="10" value="1" id="scalingX"
             oninput="this.nextElementSibling.value = this.value">
         <output>0</output>
 
-        <label for="translasiY">Scale Y:</label>
-        <input type="range" name="scalingY" min="0.1" max="10" value="1"
+        <label for="scalingY">Scale Y:</label>
+        <input type="range" name="scalingY" min="0.1" max="10" value="1" id="scalingY"
+            oninput="this.nextElementSibling.value = this.value">
+        <output>0</output>
+
+        <label for="scalingZ">Scale Y:</label>
+        <input type="range" name="scalingZ" min="0.1" max="10" value="1" id="scalingZ"
             oninput="this.nextElementSibling.value = this.value">
         <output>0</output>
     </div>
@@ -187,7 +205,7 @@
             gl_FragColor = vec4(userColor * colorFactor, 1.0);
         }
     </script>
-    <script src="scripts/script.js" type="module"></script>
+    <script src="scripts/script.js" type="module" defer></script>
 </body>
 
 </html>
