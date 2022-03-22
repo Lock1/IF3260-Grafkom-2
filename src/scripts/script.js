@@ -41,54 +41,63 @@ function main() {
     document.getElementById("eye-x").oninput = function () {
         // print the value of the input
         eye[0] = parseFloat(this.value);
+        render();
         console.log(eye[0]);
     };
 
     document.getElementById("eye-y").oninput = function () {
         // print the value of the input
         eye[1] = parseFloat(this.value);
+        render();
         console.log(eye[1]);
     };
 
     document.getElementById("eye-z").oninput = function () {
         // print the value of the input
         eye[2] = parseFloat(this.value);
+        render();
         console.log(eye[2]);
     };
 
     document.getElementById("center-x").oninput = function () {
         // print the value of the input
         center[0] = parseFloat(this.value);
+        render();
         console.log(center[0]);
     };
 
     document.getElementById("center-y").oninput = function () {
         // print the value of the input
         center[1] = parseFloat(this.value);
+        render();
         console.log(center[1]);
     };
 
     document.getElementById("center-z").oninput = function () {
         // print the value of the input
         center[2] = parseFloat(this.value);
+        render();
         console.log(center[2]);
     };
 
     document.getElementById("up-x").oninput = function () {
         // print the value of the input
         up[0] = parseFloat(this.value);
+        render();
         console.log(up[0]);
     };
 
     document.getElementById("up-y").oninput = function () {
         // print the value of the input
         up[1] = parseFloat(this.value);
+        render();
         console.log(up[1]);
     };
 
     document.getElementById("up-z").oninput = function () {
         // print the value of the input
         up[2] = parseFloat(this.value);
+        render();
         console.log(up[2]);
     };
 
@@ -201,7 +210,7 @@ function main() {
 
         // Draw
         gl.drawElements(gl.TRIANGLES, model.numPoints, gl.UNSIGNED_SHORT, 0);
-        window.requestAnimationFrame(render);
+        //window.requestAnimationFrame(render);
     }
 }
 
