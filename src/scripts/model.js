@@ -136,7 +136,7 @@ export function getHollowCube() {
 
 
 
-export function parserObjFile(file) {
+export function parserObjFile(file, normalize = false) {
     // Internal helper function
     function concatQuadrilateralIndices(arr) {
         model.indices.push(arr[0]); model.indices.push(arr[1]); model.indices.push(arr[2]);
@@ -201,13 +201,13 @@ export function parserObjFile(file) {
             concatTriangleIndices(temp_indices);
     }
     function normalizeLength() {
-        var max = model.vertices.reduce((a,b) => {return Math.max(a, b);});
-        var min = model.vertices.reduce((a,b) => {return Math.min(a, b);});
+        var max   = model.vertices.reduce((a,b) => {return Math.max(a, b);});
+        var min   = model.vertices.reduce((a,b) => {return Math.min(a, b);});
+        var range = max - min;
+
         model.vertices.forEach((item, i) => {
-            if (item > 0)
-                model.vertices[i] = model.vertices[i] / max;
-            else
-                model.vertices[i] = -(model.vertices[i] / min);
+            var normed = (item - min) / range;
+            model.vertices[i] = normed - 0.5;
         });
     }
 
@@ -234,6 +234,7 @@ export function parserObjFile(file) {
         }
     }
 
-    normalizeLength();
+    if (normalize)
+        normalizeLength();
     return model;
 }

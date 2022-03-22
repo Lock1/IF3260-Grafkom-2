@@ -1,11 +1,12 @@
-import { translationMatrix, scaleMatrix, matrixMult, rotationMatrix } from './math.js'
-import { webglCreateShaderProgram } from './utils.js'
-import { getCube, getHollowCube, parserObjFile, filetest} from './model.js'
+import { translationMatrix, scaleMatrix, matrixMult, rotationMatrix } from './math.js';
+import { webglCreateShaderProgram } from './utils.js';
+import { getCube, getHollowCube, parserObjFile } from './model.js';
+import { tetrahedral_obj, icosahedron_obj } from './builtin-obj-models.js';
 
 function getInitialTransformMatrix() {
     var transformMatrix = translationMatrix(0, 0); // Just empty matrix
     var translation = [0, 0];
-    var scale       = [0.4, 0.4, 0.4];
+    var scale       = [0.8, 0.8, 0.8];
     var rotation    = [0, 0, 0];
 
     transformMatrix = matrixMult(scaleMatrix(scale[0], scale[1], scale[2]), transformMatrix);
@@ -23,32 +24,39 @@ function main() {
             return;
         }
 
-
         var reader    = new FileReader();
         reader.onload = function(e) {
           model = parserObjFile(e.target.result);
         };
         reader.readAsText(file);
-        // const data = file.text();
-        // model = parserObjFile(data);
     }
+    function callbackModel(e) {
+        var selectedModelRadio = document.querySelector("input[name='bentuk']:checked").value;
+        switch (selectedModelRadio) {
+            case "tetrahedral":
+                // TODO : Tambah
+                break;
+            case "cube":
+                model = getHollowCube();
+                break;
+            case "icosahedron":
+                model = parserObjFile(icosahedron_obj, true);
+                break;
+        }
+    }
+
     document.getElementById('obj-input').addEventListener('change', callbackFile, false);
+    document.forms["model"].elements["bentuk"].forEach((item, i) => {
+        item.onclick = callbackModel;
+    });
 
     // -- Get model --
     // TODO : Update
-    var model = {
-        vertices : [],
-        indices  : [],
-        numPoints: 0
-    }
-    // FIXME : Kalo model diganti event listener, gambarnya bermasalah
-    // model = getCube();
-    model = getHollowCube();
-    // model = parserObjFile(filetest);
+    var model = getHollowCube();
 
     // Idle animation parameter
     // Asumsi requestAnimationFrame hingga 60 calls per sec
-    var rot_increment = [Math.PI / 180 * (1 / 60) * 5, Math.PI / 180 * (1 / 60) * 2, 0];
+    var rot_increment = [Math.PI / 180 * (1 / 60) * 20, Math.PI / 180 * (1 / 60) * 30, 0];
 
     // Initial transformation matrix
     var transformMatrix = getInitialTransformMatrix();
@@ -96,10 +104,8 @@ function main() {
         gl.uniformMatrix4fv(transformMatrixLoc, false, new Float32Array(transformMatrix));
         gl.uniform3f(colorLoc, 1, 0.5, 0);
 
-
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
-
 
         // Draw
         gl.drawElements(gl.TRIANGLES, model.numPoints, gl.UNSIGNED_SHORT, 0);
