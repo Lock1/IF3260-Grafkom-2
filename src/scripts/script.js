@@ -16,6 +16,11 @@ function getInitialTransformMatrix() {
 }
 
 function main() {
+    // Variable for eye position, center position and up vector
+    var eye = [0, 0, 0];
+    var center = [0, 0, 0];
+    var up = [0, 0, 1];
+
     // Helper function
     async function callbackFile(e) {
         var file = e.target.files[0];
@@ -30,6 +35,69 @@ function main() {
         };
         reader.readAsText(file);
     }
+
+    // Add listener for slider change in eye-x position
+    document.getElementById("eye-x").oninput = function () {
+        // print the value of the input
+        eye[0] = parseFloat(this.value);
+        console.log(eye[0]);
+    };
+
+    document.getElementById("eye-y").oninput = function () {
+        // print the value of the input
+        eye[1] = parseFloat(this.value);
+        console.log(eye[1]);
+    };
+
+    document.getElementById("eye-z").oninput = function () {
+        // print the value of the input
+        eye[2] = parseFloat(this.value);
+        console.log(eye[2]);
+    };
+
+    document.getElementById("center-x").oninput = function () {
+        // print the value of the input
+        center[0] = parseFloat(this.value);
+        console.log(center[0]);
+    };
+
+    document.getElementById("center-y").oninput = function () {
+        // print the value of the input
+        center[1] = parseFloat(this.value);
+        console.log(center[1]);
+    };
+
+    document.getElementById("center-z").oninput = function () {
+        // print the value of the input
+        center[2] = parseFloat(this.value);
+        console.log(center[2]);
+    };
+
+    document.getElementById("up-x").oninput = function () {
+        // print the value of the input
+        up[0] = parseFloat(this.value);
+        console.log(up[0]);
+    };
+
+    document.getElementById("up-y").oninput = function () {
+        // print the value of the input
+        up[1] = parseFloat(this.value);
+        console.log(up[1]);
+    };
+
+    document.getElementById("up-z").oninput = function () {
+        // print the value of the input
+        up[2] = parseFloat(this.value);
+        console.log(up[2]);
+    };
+
+    // // Add listener for eye position "eye-y"
+    // document.getElementById("eye-y").addEventListener("input", function(e) {
+    //     eye[1] = parseFloat(e.target.value);
+    //     console.log(eye);
+    //     //updateViewMatrix();
+    // });
+
     function callbackModel(e) {
         var selectedModelRadio = document.querySelector("input[name='bentuk']:checked").value;
         switch (selectedModelRadio) {
@@ -106,6 +174,11 @@ function main() {
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
+
+        // Compute matrix for the camera
+        //var cameraMatrix = m4.identity();
+
+        //cameraMatrix = m4.lookAt(eye, center, up);
 
         // Draw
         gl.drawElements(gl.TRIANGLES, model.numPoints, gl.UNSIGNED_SHORT, 0);
