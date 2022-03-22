@@ -187,6 +187,13 @@ function main() {
         viewMatrix = m4.yRotate(viewMatrix, -Math.PI / 2);
         viewMatrix = m4.zRotate(viewMatrix, -Math.PI / 2);
 
+        // Compute matrix for the model
+        var modelMatrix = m4.identity();
+        modelMatrix = m4.xRotate(modelMatrix, Math.PI / 2);
+        modelMatrix = m4.yRotate(modelMatrix, Math.PI / 2);
+        modelMatrix = m4.zRotate(modelMatrix, Math.PI / 2);
+        var modelViewMatrix = m4.multiply(viewMatrix, modelMatrix);
+
         // Draw
         gl.drawElements(gl.TRIANGLES, model.numPoints, gl.UNSIGNED_SHORT, 0);
         window.requestAnimationFrame(render);
