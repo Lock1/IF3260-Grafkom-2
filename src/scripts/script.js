@@ -2,6 +2,7 @@ import { translationMatrix, scaleMatrix, matrixMult, rotationMatrix } from './ma
 import { webglCreateShaderProgram } from './utils.js';
 import { getCube, getHollowCube, parserObjFile } from './model.js';
 import { tetrahedral_obj, icosahedron_obj, cube_obj } from './builtin-obj-models.js';
+import { m4 } from './matUtils.js';
 
 function getInitialTransformMatrix() {
     var transformMatrix = translationMatrix(0, 0); // Just empty matrix
@@ -102,7 +103,7 @@ function main() {
         var selectedModelRadio = document.querySelector("input[name='bentuk']:checked").value;
         switch (selectedModelRadio) {
             case "tetrahedral":
-                // TODO : Tambah
+                model = parserObjFile(tetrahedral_obj, true);
                 break;
             case "cube":
                 model = parserObjFile(cube_obj, true);
@@ -175,10 +176,16 @@ function main() {
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
 
-        // Compute matrix for the camera
-        //var cameraMatrix = m4.identity();
+        //Compute matrix for the camera
+        var cameraMatrix = m4.identity();
 
-        //cameraMatrix = m4.lookAt(eye, center, up);
+        cameraMatrix = m4.lookAt(eye, center, up);
+
+        var viewMatrix = m4.inverse(cameraMatrix);
+
+        viewMatrix = m4.xRotate(viewMatrix, -Math.PI / 2);
+        viewMatrix = m4.yRotate(viewMatrix, -Math.PI / 2);
+        viewMatrix = m4.zRotate(viewMatrix, -Math.PI / 2);
 
         // Draw
         gl.drawElements(gl.TRIANGLES, model.numPoints, gl.UNSIGNED_SHORT, 0);
