@@ -1,7 +1,7 @@
 import { translationMatrix, scaleMatrix, matrixMult, rotationMatrix } from './math.js';
 import { webglCreateShaderProgram } from './utils.js';
 import { getCube, getHollowCube, parserObjFile } from './model.js';
-import { tetrahedral_obj, icosahedron_obj } from './builtin-obj-models.js';
+import { tetrahedral_obj, icosahedron_obj, cube_obj } from './builtin-obj-models.js';
 
 function getInitialTransformMatrix() {
     var transformMatrix = translationMatrix(0, 0); // Just empty matrix
@@ -37,7 +37,7 @@ function main() {
                 // TODO : Tambah
                 break;
             case "cube":
-                model = getHollowCube();
+                model = parserObjFile(cube_obj, true);
                 break;
             case "icosahedron":
                 model = parserObjFile(icosahedron_obj, true);
