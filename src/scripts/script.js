@@ -1,6 +1,6 @@
 import { translationMatrix, scaleMatrix, matrixMult, rotationMatrix } from './math.js'
 import { webglCreateShaderProgram } from './utils.js'
-import { getCube, getHollowCube, parserObjFile } from './model.js'
+import { getCube, getHollowCube, parserObjFile, filetest} from './model.js'
 
 function getInitialTransformMatrix() {
     var transformMatrix = translationMatrix(0, 0); // Just empty matrix
@@ -16,18 +16,21 @@ function getInitialTransformMatrix() {
 
 function main() {
     // Helper function
-    function callbackFile(e) {
+    async function callbackFile(e) {
         var file = e.target.files[0];
         if (!file) {
             console.log("File not found");
             return;
         }
 
+
         var reader    = new FileReader();
         reader.onload = function(e) {
           model = parserObjFile(e.target.result);
         };
         reader.readAsText(file);
+        // const data = file.text();
+        // model = parserObjFile(data);
     }
     document.getElementById('obj-input').addEventListener('change', callbackFile, false);
 
@@ -39,8 +42,9 @@ function main() {
         numPoints: 0
     }
     // FIXME : Kalo model diganti event listener, gambarnya bermasalah
-    model = getCube();
+    // model = getCube();
     model = getHollowCube();
+    // model = parserObjFile(filetest);
 
     // Idle animation parameter
     // Asumsi requestAnimationFrame hingga 60 calls per sec
@@ -65,6 +69,9 @@ function main() {
     var vertexBuffer = gl.createBuffer();
     var indexBuffer  = gl.createBuffer();
 
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+
     var coordLoc           = gl.getAttribLocation(shaderProgram, "coordinates");
     var transformMatrixLoc = gl.getUniformLocation(shaderProgram, "transformationMatrix");
     var colorLoc           = gl.getUniformLocation(shaderProgram, "userColor");
@@ -81,18 +88,18 @@ function main() {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.enable(gl.DEPTH_TEST);
+        gl.enable(gl.CULL_FACE);
 
         // Bind vertices and indices
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
-
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
-
         gl.vertexAttribPointer(coordLoc, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(coordLoc);
         gl.uniformMatrix4fv(transformMatrixLoc, false, new Float32Array(transformMatrix));
         gl.uniform3f(colorLoc, 1, 0.5, 0);
+
+
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
+
 
         // Draw
         gl.drawElements(gl.TRIANGLES, model.numPoints, gl.UNSIGNED_SHORT, 0);

@@ -164,6 +164,7 @@ export function parserObjFile(file) {
         vertex.push(parseFloat(raw_data_str));
         raw_data_str = raw_data_str.substr(raw_data_str.indexOf(' '), raw_data_str.length);
         vertex.push(parseFloat(raw_data_str));
+        raw_data_str = raw_data_str.trim();
         raw_data_str = raw_data_str.substr(raw_data_str.indexOf(' '), raw_data_str.length);
         vertex.push(parseFloat(raw_data_str));
 
@@ -199,6 +200,16 @@ export function parserObjFile(file) {
         else
             concatTriangleIndices(temp_indices);
     }
+    function normalizeLength() {
+        var max = model.vertices.reduce((a,b) => {return Math.max(a, b);});
+        var min = model.vertices.reduce((a,b) => {return Math.min(a, b);});
+        model.vertices.forEach((item, i) => {
+            if (item > 0)
+                model.vertices[i] = model.vertices[i] / max;
+            else
+                model.vertices[i] = model.vertices[i] / min;
+        });
+    }
 
     var model = {
         vertices : [],
@@ -223,5 +234,49 @@ export function parserObjFile(file) {
         }
     }
 
+    normalizeLength();
     return model;
 }
+
+export const filetest = `
+# Blender 3.1.0
+# www.blender.org
+mtllib sanitycheck.mtl
+o Cube
+v 1.000000 1.000000 -1.000000
+v 1.000000 -1.000000 -1.000000
+v 1.000000 1.000000 1.000000
+v 1.000000 -1.000000 1.000000
+v -1.000000 1.000000 -1.000000
+v -1.000000 -1.000000 -1.000000
+v -1.000000 1.000000 1.000000
+v -1.000000 -1.000000 1.000000
+vn -0.0000 1.0000 -0.0000
+vn -0.0000 -0.0000 1.0000
+vn -1.0000 -0.0000 -0.0000
+vn -0.0000 -1.0000 -0.0000
+vn 1.0000 -0.0000 -0.0000
+vn -0.0000 -0.0000 -1.0000
+vt 0.625000 0.500000
+vt 0.375000 0.500000
+vt 0.625000 0.750000
+vt 0.375000 0.750000
+vt 0.875000 0.500000
+vt 0.625000 0.250000
+vt 0.125000 0.500000
+vt 0.375000 0.250000
+vt 0.875000 0.750000
+vt 0.625000 1.000000
+vt 0.625000 0.000000
+vt 0.375000 1.000000
+vt 0.375000 0.000000
+vt 0.125000 0.750000
+s 0
+usemtl Material
+f 1/1/1 5/5/1 7/9/1 3/3/1
+f 4/4/2 3/3/2 7/10/2 8/12/2
+f 8/13/3 7/11/3 5/6/3 6/8/3
+f 6/7/4 2/2/4 4/4/4 8/14/4
+f 2/2/5 1/1/5 3/3/5 4/4/5
+f 6/8/6 5/6/6 1/1/6 2/2/6
+`
