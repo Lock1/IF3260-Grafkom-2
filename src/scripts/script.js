@@ -13,7 +13,7 @@ function setDefaultState() {
 
         transformation: {
             translation: [0, 0, 0],
-            rotation   : [0, 0, 0],
+            rotation   : [Math.PI / 180 * 60, 0, Math.PI / 180 * 60],
             scale      : [1, 1, 1]
         },
 
@@ -55,9 +55,7 @@ function main() {
     setUIEventListener();
 
     var transformMatrix;
-    // Initial matrices
-    // var transformMatrix = m4.identity();
-    // var cameraMatrix   = m4.identity();
+    var cameraMatrix;
 
     // -- Ritual WebGL Create Program --
     const canvas = document.getElementById('canvas');
@@ -96,41 +94,32 @@ function main() {
 
 
     function render() {
-        // Idle animation
-        // transformMatrix = getInitialTransformMatrix();
-        // transformMatrix = translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]);
-        // transformMatrix = rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]);
-        // transformMatrix = scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]);
-
-        // plz don't comment these lines, somehow camera control doesn't work if this get commented out
-        // transformMatrix = matrixMult(transformMatrix, translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]));
-        // transformMatrix = matrixMult(transformMatrix, rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]));
-        // transformMatrix = matrixMult(transformMatrix, scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]));
-
         // Clear canvas & set states
         transformMatrix = computeTransformMatrix();
+
+        if (state.useLight) {
+            var shaderProgram = lightingShaderProgram;
+            var coordLoc      = lightCoordLoc;
+            var trMatLoc      = lightTrMatLoc;
+            var colorLoc      = lightColorLoc;
+        }
+        else {
+            var shaderProgram = flatShaderProgram;
+            var coordLoc      = flatCoordLoc;
+            var trMatLoc      = flatTrMatLoc;
+            var colorLoc      = flatColorLoc;
+        }
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.enable(gl.DEPTH_TEST);
         gl.enable(gl.CULL_FACE);
 
-        if (state.useLight) {
-            gl.useProgram(lightingShaderProgram);
-            gl.vertexAttribPointer(lightCoordLoc, 3, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(lightCoordLoc);
-            gl.uniformMatrix4fv(lightTrMatLoc, false, new Float32Array(transformMatrix));
-            gl.uniform3f(lightColorLoc, 1, 0.5, 0);
-        }
-        else {
-            gl.useProgram(flatShaderProgram);
-            gl.vertexAttribPointer(flatCoordLoc, 3, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(flatCoordLoc);
-            gl.uniformMatrix4fv(flatTrMatLoc, false, new Float32Array(transformMatrix));
-            gl.uniform3f(flatColorLoc, 1, 0.5, 0);
-        }
-
-        // Bind vertices and indices
+        gl.useProgram(shaderProgram);
+        gl.vertexAttribPointer(coordLoc, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(coordLoc);
+        gl.uniformMatrix4fv(trMatLoc, false, new Float32Array(transformMatrix));
+        gl.uniform3f(colorLoc, 1, 0.5, 0);
 
         //Compute matrix for the camera
         // var cameraMatrix = m4.identity();
@@ -149,6 +138,7 @@ function main() {
         // gl.uniformMatrix4fv(modelViewMatrixLoc,false,modelViewMatrix);
         // gl.uniform3f(colorLoc, 1, 0.5, 0);
 
+        // Bind vertices and indices
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(state.model.vertices), gl.STATIC_DRAW);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(state.model.indices), gl.STATIC_DRAW);
 
