@@ -99,80 +99,82 @@ function main() {
         // print the value of the input
         this.nextElementSibling.value = this.value;
         eye[0] = parseFloat(this.value);
+        cameraMatrix = m4.lookAt(eye, center, up);
         render();
-        console.log(eye[0]);
+        //console.log(eye[0]);
     };
 
     document.getElementById("eye-y").oninput = function () {
         // print the value of the input
         this.nextElementSibling.value = this.value;
         eye[1] = parseFloat(this.value);
+        cameraMatrix = m4.lookAt(eye, center, up);
         render();
-        console.log(eye[1]);
+        //console.log(eye[1]);
     };
 
     document.getElementById("eye-z").oninput = function () {
         // print the value of the input
         this.nextElementSibling.value = this.value;
         eye[2] = parseFloat(this.value);
+        cameraMatrix = m4.lookAt(eye, center, up);
         render();
-        console.log(eye[2]);
+        //console.log(eye[2]);
     };
 
     document.getElementById("center-x").oninput = function () {
         // print the value of the input
         this.nextElementSibling.value = this.value;
         center[0] = parseFloat(this.value);
+        cameraMatrix = m4.lookAt(eye, center, up);
         render();
-        console.log(center[0]);
+        //console.log(center[0]);
     };
 
     document.getElementById("center-y").oninput = function () {
         // print the value of the input
         this.nextElementSibling.value = this.value;
         center[1] = parseFloat(this.value);
+        cameraMatrix = m4.lookAt(eye, center, up);
         render();
-        console.log(center[1]);
+        //console.log(center[1]);
     };
 
     document.getElementById("center-z").oninput = function () {
         // print the value of the input
         this.nextElementSibling.value = this.value;
         center[2] = parseFloat(this.value);
+        cameraMatrix = m4.lookAt(eye, center, up);
         render();
-        console.log(center[2]);
+        //console.log(center[2]);
     };
 
     document.getElementById("up-x").oninput = function () {
         // print the value of the input
         this.nextElementSibling.value = this.value;
         up[0] = parseFloat(this.value);
+        cameraMatrix = m4.lookAt(eye, center, up);
         render();
-        console.log(up[0]);
+        //console.log(up[0]);
     };
 
     document.getElementById("up-y").oninput = function () {
         // print the value of the input
         this.nextElementSibling.value = this.value;
         up[1] = parseFloat(this.value);
+        cameraMatrix = m4.lookAt(eye, center, up);
         render();
-        console.log(up[1]);
+        //console.log(up[1]);
     };
 
     document.getElementById("up-z").oninput = function () {
         // print the value of the input
         this.nextElementSibling.value = this.value;
         up[2] = parseFloat(this.value);
+        cameraMatrix = m4.lookAt(eye, center, up);
         render();
-        console.log(up[2]);
+        //console.log(up[2]);
     };
-
-    // // Add listener for eye position "eye-y"
-    // document.getElementById("eye-y").addEventListener("input", function(e) {
-    //     eye[1] = parseFloat(e.target.value);
-    //     console.log(eye);
-    //     //updateViewMatrix();
-    // });
 
     function callbackModel(e) {
         var selectedModelRadio = document.querySelector("input[name='bentuk']:checked").value;
@@ -209,6 +211,7 @@ function main() {
 
     // Initial transformation matrix
     var transformMatrix = getInitialTransformMatrix();
+    var cameraMatrix = m4.identity();
 
     // -- Ritual WebGL Create Program --
     const canvas = document.getElementById('canvas');
@@ -246,6 +249,10 @@ function main() {
         // transformMatrix = translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]);
         // transformMatrix = rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]);
         // transformMatrix = scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]);
+
+        transformMatrix = matrixMult(transformMatrix, translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]));
+        transformMatrix = matrixMult(transformMatrix, rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]));
+        transformMatrix = matrixMult(transformMatrix, scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]));
 
         // Clear canvas & set states
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

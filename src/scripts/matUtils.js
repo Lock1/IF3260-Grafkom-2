@@ -113,6 +113,23 @@ export const m4 = {
         return m4.multiply(m, m4.zRotation(angleInRadians));
     },
 
+    translate: function (m, tx, ty, tz) {
+        return m4.multiply(m, m4.translation(tx, ty, tz));
+    },
+
+    scale: function (m, sx, sy, sz) {
+        return m4.multiply(m, m4.scaling(sx, sy, sz));
+    },
+
+    scaling: function (sx, sy, sz) {
+        return [
+            sx, 0, 0, 0,
+            0, sy, 0, 0,
+            0, 0, sz, 0,
+            0, 0, 0, 1,
+        ];
+    },
+
     xRotation: function (angleInRadians) {
         var c = Math.cos(angleInRadians);
         var s = Math.sin(angleInRadians);
