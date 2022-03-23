@@ -22,8 +22,9 @@ function setDefaultState() {
             radius  : 0.1,
         },
 
-        useLight: true,
+        useLight      : true,
         projectionType: "orth", // orth, obli, pers
+        pickedColor   : [1.0, 0.5, 0.0, 1.0],
     };
 }
 
@@ -45,7 +46,6 @@ function computeViewMatrix() {
     viewMatrix = matrixMult(viewMatrix, translationMatrix(0, 0, state.view.radius));
     return m4.inverse(viewMatrix);
 }
-
 
 function main() {
     // Set state and event listener
@@ -88,11 +88,6 @@ function main() {
     var flatPrjMatLoc = gl.getUniformLocation(flatShaderProgram, "uProjectionMatrix");
     var flatFudgeLoc  = gl.getUniformLocation(flatShaderProgram, "fudgeFactor");
 
-
-
-
-    // var modelViewMatrixLoc = gl.getUniformLocation(shaderProgram, "modelViewMatrix");
-
     window.requestAnimationFrame(render);
 
 
@@ -127,7 +122,7 @@ function main() {
         gl.vertexAttribPointer(coordLoc, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(coordLoc);
         gl.uniformMatrix4fv(trMatLoc, false, new Float32Array(transformMatrix));
-        gl.uniform3f(colorLoc, 1, 0.5, 0); // TODO : Color
+        gl.uniform3f(colorLoc, state.pickedColor[0], state.pickedColor[1], state.pickedColor[2]);
 
         if (state.projectionType === "pers")
             gl.uniform1f(fudgeLoc, 1.275);
@@ -273,6 +268,24 @@ function setUIEventListener() {
     function callbackShading(e) {
         state.useLight = document.querySelector("#shading").checked;
     }
+
+
+    // -------------------- Color & etc --------------------
+    // Sumber : Tugas besar 1
+    function getColor() {
+        const hexToRgb = hex =>
+          hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i
+                     ,(m, r, g, b) => '#' + r + r + g + g + b + b)
+            .substring(1).match(/.{2}/g)
+            .map(x => parseInt(x, 16))
+
+        var hex = document.getElementById("color_picker").value;
+        var rgb = hexToRgb(hex);
+        state.pickedColor = [rgb[0]/255, rgb[1]/255, rgb[2]/255, 1.0];
+    }
+
+    document.getElementById("color_picker").addEventListener('change', getColor, false);
+
     document.getElementById("shading").addEventListener('change', callbackShading, false);
     document.getElementById("reset").click();
 }
