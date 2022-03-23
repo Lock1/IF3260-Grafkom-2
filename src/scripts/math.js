@@ -14,13 +14,26 @@ export function matrixMult(m1, m2) {
     return m3;
 }
 
-export const projectionMatrix = (gl) => {
-  return [
-    2 / gl.canvas.clientWidth, 0, 0, 0,
-    0, 2 / gl.canvas.clientHeight, 0, 0,
-    0, 0, 2 / 400, 0,
-    -1, 1, 0, 1
-  ];
+export const projectionMatrix = (type) => {
+    switch (type) {
+        case "orth":
+            return [
+              1, 0, 0, 0,
+              0, 1, 0, 0,
+              0, 0, 1, 0,
+              0, 0, 0, 1
+            ];
+        case "obli": // Cabinet oblique
+            return [
+              1, 0, 0, 0,
+              0, 1, 0, 0,
+              Math.cos(64/180*Math.PI)/2, Math.cos(64/180*Math.PI)/2, 1, 0,
+              0, 0, 0, 1
+            ];
+        case "pers":
+            return;
+    }
+
 }
 
 export const translationMatrix = (x, y, z) => {

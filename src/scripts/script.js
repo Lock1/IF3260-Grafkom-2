@@ -13,7 +13,7 @@ function setDefaultState() {
 
         transformation: {
             translation: [0, 0, 0],
-            rotation   : [Math.PI / 180 * 60, 0, Math.PI / 180 * 60],
+            rotation   : [0, 0, 0],
             scale      : [1, 1, 1]
         },
 
@@ -24,9 +24,10 @@ function setDefaultState() {
         },
 
         useLight: true,
+        // projectionType: "obli", // orth, obli, pers
+        projectionType: "orth", // orth, obli, pers
     };
 }
-
 
 function computeTransformMatrix() {
     var transformMatrix;
@@ -78,13 +79,17 @@ function main() {
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
-    var lightCoordLoc = gl.getAttribLocation(lightingShaderProgram, "coordinates");
-    var lightTrMatLoc = gl.getUniformLocation(lightingShaderProgram, "transformationMatrix");
-    var lightColorLoc = gl.getUniformLocation(lightingShaderProgram, "userColor");
+    var lightCoordLoc  = gl.getAttribLocation(lightingShaderProgram, "coordinates");
+    var lightTrMatLoc  = gl.getUniformLocation(lightingShaderProgram, "transformationMatrix");
+    var lightColorLoc  = gl.getUniformLocation(lightingShaderProgram, "userColor");
+    var lightPrjMatLoc = gl.getUniformLocation(lightingShaderProgram, "uProjectionMatrix");
 
-    var flatCoordLoc = gl.getAttribLocation(flatShaderProgram, "coordinates");
-    var flatTrMatLoc = gl.getUniformLocation(flatShaderProgram, "transformationMatrix");
-    var flatColorLoc = gl.getUniformLocation(flatShaderProgram, "userColor");
+    var flatCoordLoc  = gl.getAttribLocation(flatShaderProgram, "coordinates");
+    var flatTrMatLoc  = gl.getUniformLocation(flatShaderProgram, "transformationMatrix");
+    var flatColorLoc  = gl.getUniformLocation(flatShaderProgram, "userColor");
+    var flatPrjMatLoc = gl.getUniformLocation(flatShaderProgram, "uProjectionMatrix");
+
+
 
 
     // var modelViewMatrixLoc = gl.getUniformLocation(shaderProgram, "modelViewMatrix");
@@ -102,12 +107,14 @@ function main() {
             var coordLoc      = lightCoordLoc;
             var trMatLoc      = lightTrMatLoc;
             var colorLoc      = lightColorLoc;
+            var projLoc       = lightPrjMatLoc;
         }
         else {
             var shaderProgram = flatShaderProgram;
             var coordLoc      = flatCoordLoc;
             var trMatLoc      = flatTrMatLoc;
             var colorLoc      = flatColorLoc;
+            var projLoc       = flatPrjMatLoc;
         }
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -120,6 +127,8 @@ function main() {
         gl.enableVertexAttribArray(coordLoc);
         gl.uniformMatrix4fv(trMatLoc, false, new Float32Array(transformMatrix));
         gl.uniform3f(colorLoc, 1, 0.5, 0);
+
+        gl.uniformMatrix4fv(projLoc, false, projectionMatrix(state.projectionType))
 
         //Compute matrix for the camera
         // var cameraMatrix = m4.identity();
@@ -150,7 +159,7 @@ function main() {
 
 
 function setUIEventListener() {
-    // -------------------- Rotation --------------------
+    // -------------------- Model & Projection --------------------
     function callbackFile(e) {
         var file = e.target.files[0];
         if (!file) {
@@ -180,9 +189,28 @@ function setUIEventListener() {
         }
     }
 
+    function callbackProjection(e) {
+        var selectedModelRadio = document.querySelector("input[name='proyeksi']:checked").value;
+        switch (selectedModelRadio) {
+            case "orthographic":
+                state.projectionType = "orth";
+                break;
+            case "oblique":
+                state.projectionType = "obli";
+                break;
+            case "perspective":
+                state.projectionType = "pers";
+                break;
+        }
+    }
+
     document.getElementById('obj-input').addEventListener('change', callbackFile, false);
     document.forms["model"].elements["bentuk"].forEach((item, i) => {
         item.onclick = callbackModel;
+    });
+
+    document.forms["model"].elements["proyeksi"].forEach((item, i) => {
+        item.onclick = callbackProjection;
     });
 
 
@@ -300,6 +328,7 @@ function setUIEventListener() {
         state.useLight = document.querySelector("#shading").checked;
     }
     document.getElementById('shading').addEventListener('change', callbackShading, false);
+    document.getElementById("reset").click();
 }
 
 
