@@ -78,5 +78,5 @@ export const rotationMatrix = (xt, yt, zt) => {
       ];
     }
 
-    return matrixMult(xRotation(xt), yRotation(yt), zRotation(zt));
+    return matrixMult(matrixMult(xRotation(xt), yRotation(yt)), zRotation(zt));
 }
