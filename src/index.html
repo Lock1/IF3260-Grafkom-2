@@ -19,17 +19,18 @@
     <div class="row">
         <div><canvas id="canvas" width="520" height="520"></canvas></div>
 
-        <div>
+        <!-- FIXME : Optional, rename nama form -->
+        <div><form name="model" id="model" action="">
             <h2>Bentuk</h2>
             <input type="file" id="obj-input"/>
             <!-- radio button untuk memilih bentuk: Cube, Tetrahedral, Prism -->
             <div>
                 <label for="bentuk">Jenis bentuk:</label>
-                <form name="model" id="model">
+                <!-- <form name="model" id="model"> -->
                     <input type="radio" name="bentuk" value="cube" checked>Kubus
                     <input type="radio" name="bentuk" value="tetrahedral">Tetrahedral
                     <input type="radio" name="bentuk" value="icosahedron">Icosahedron
-                </form>
+                <!-- </form> -->
             </div>
 
             <br>
@@ -173,7 +174,7 @@
 
             <!-- Tombol reset ke default view -->
             <div>
-                <input type="submit" id="reset" name="reset" value="Reset">
+                <input type="reset" id="reset" name="reset" value="Reset">
             </div>
 
             <br>
@@ -182,7 +183,7 @@
             <div>
                 <input type="submit" name="help" onclick="window.open('./help.html','_blank')" value="Help">
             </div>
-        </div>
+        </div></form>
     </div>
     <br>
 

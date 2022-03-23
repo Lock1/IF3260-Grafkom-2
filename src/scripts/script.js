@@ -39,177 +39,23 @@ function computeTransformMatrix() {
     return transformMatrix;
 }
 
+function computeCameraMatrix() {
+    var cameraMatrix;
+    // this.nextElementSibling.value = this.value;
+    // eye[0] = parseFloat(this.value);
+    // cameraMatrix = m4.lookAt(eye, center, up);
+    return cameraMatrix;
+}
+
 
 function main() {
-    // Variable for eye position, center position and up vector
-    var eye = [0, 0, 0];
-    var center = [0, 0, 0];
-    var up = [0, 0, 1];
-
-    // Helper function
-    async function callbackFile(e) {
-        var file = e.target.files[0];
-        if (!file) {
-            console.log("File not found");
-            return;
-        }
-
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            model = parserObjFile(e.target.result);
-        };
-        reader.readAsText(file);
-    }
-
+    // Set state and event listener
     setDefaultState();
     setUIEventListener();
-    // Add listener for reset button
-    document.getElementById("reset").addEventListener("click", function () {
-        model = getHollowCube();
-        transformMatrix = m4.identity();
 
-        // Idle animation parameter
-        // Asumsi requestAnimationFrame hingga 60 calls per sec
-        rot_increment = [0, 0, 0];
-        trans_increment = [0, 0, 0];
-        scale_increment = [0.8, 0.8, 0.8];
-
-        // Initial transformation matrix
-        transformMatrix = m4.identity();
-        cameraMatrix = m4.identity();
-        eye = [0, 0, 0];
-        up = [0, 1, 0];
-        center = [0, 0, 0];
-        render();
-    });
-
-    // Add listener for slider change in eye-x position
-    document.getElementById("eye-x").oninput = function () {
-        // print the value of the input
-        this.nextElementSibling.value = this.value;
-        eye[0] = parseFloat(this.value);
-        cameraMatrix = m4.lookAt(eye, center, up);
-        render();
-        //console.log(eye[0]);
-    };
-
-    document.getElementById("eye-y").oninput = function () {
-        // print the value of the input
-        this.nextElementSibling.value = this.value;
-        eye[1] = parseFloat(this.value);
-        cameraMatrix = m4.lookAt(eye, center, up);
-        render();
-        //console.log(eye[1]);
-    };
-
-    document.getElementById("eye-z").oninput = function () {
-        // print the value of the input
-        this.nextElementSibling.value = this.value;
-        eye[2] = parseFloat(this.value);
-        cameraMatrix = m4.lookAt(eye, center, up);
-        render();
-        //console.log(eye[2]);
-    };
-
-    document.getElementById("center-x").oninput = function () {
-        // print the value of the input
-        this.nextElementSibling.value = this.value;
-        center[0] = parseFloat(this.value);
-        cameraMatrix = m4.lookAt(eye, center, up);
-        render();
-        //console.log(center[0]);
-    };
-
-    document.getElementById("center-y").oninput = function () {
-        // print the value of the input
-        this.nextElementSibling.value = this.value;
-        center[1] = parseFloat(this.value);
-        cameraMatrix = m4.lookAt(eye, center, up);
-        render();
-        //console.log(center[1]);
-    };
-
-    document.getElementById("center-z").oninput = function () {
-        // print the value of the input
-        this.nextElementSibling.value = this.value;
-        center[2] = parseFloat(this.value);
-        cameraMatrix = m4.lookAt(eye, center, up);
-        render();
-        //console.log(center[2]);
-    };
-
-    document.getElementById("up-x").oninput = function () {
-        // print the value of the input
-        this.nextElementSibling.value = this.value;
-        up[0] = parseFloat(this.value);
-        cameraMatrix = m4.lookAt(eye, center, up);
-        render();
-        //console.log(up[0]);
-    };
-
-    document.getElementById("up-y").oninput = function () {
-        // print the value of the input
-        this.nextElementSibling.value = this.value;
-        up[1] = parseFloat(this.value);
-        cameraMatrix = m4.lookAt(eye, center, up);
-        render();
-        //console.log(up[1]);
-    };
-
-    document.getElementById("up-z").oninput = function () {
-        // print the value of the input
-        this.nextElementSibling.value = this.value;
-        up[2] = parseFloat(this.value);
-        cameraMatrix = m4.lookAt(eye, center, up);
-        render();
-        //console.log(up[2]);
-    };
-
-    // Reset button
-    document.getElementById("reset").addEventListener("click", () => {
-        rot_increment = [0, 0, 0];
-        trans_increment = [0, 0, 0];
-        scale_increment = [0.8, 0.8, 0.8];
-        transformMatrix =  m4.identity();
-        render();
-    });
-
-    function callbackModel(e) {
-        var selectedModelRadio = document.querySelector("input[name='bentuk']:checked").value;
-        switch (selectedModelRadio) {
-            case "tetrahedral":
-                model = parserObjFile(tetrahedral_obj, true);
-                render();
-                break;
-            case "cube":
-                model = parserObjFile(cube_obj, true);
-                render();
-                break;
-            case "icosahedron":
-                model = parserObjFile(icosahedron_obj, true);
-                render();
-                break;
-        }
-    }
-
-    document.getElementById('obj-input').addEventListener('change', callbackFile, false);
-    document.forms["model"].elements["bentuk"].forEach((item, i) => {
-        item.onclick = callbackModel;
-    });
-
-    // -- Get model --
-    // TODO : Update
-    var model = getHollowCube();
-
-    // Idle animation parameter
-    // Asumsi requestAnimationFrame hingga 60 calls per sec
-    var rot_increment = [0, 0, 0];
-    var trans_increment = [0, 0, 0];
-    var scale_increment = [0.8, 0.8, 0.8];
-
-    // Initial transformation matrix
-    var transformMatrix = m4.identity();
-    var cameraMatrix = m4.identity();
+    // Initial matrices
+    // var transformMatrix = m4.identity();
+    // var cameraMatrix   = m4.identity();
 
     // -- Ritual WebGL Create Program --
     const canvas = document.getElementById('canvas');
@@ -295,6 +141,44 @@ function main() {
 
 function setUIEventListener() {
     // -------------------- Rotation --------------------
+    function callbackFile(e) {
+        var file = e.target.files[0];
+        if (!file) {
+            console.log("File not found");
+            return;
+        }
+
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            state.model = parserObjFile(e.target.result);
+        };
+        reader.readAsText(file);
+    }
+
+    function callbackModel(e) {
+        var selectedModelRadio = document.querySelector("input[name='bentuk']:checked").value;
+        switch (selectedModelRadio) {
+            case "tetrahedral":
+                state.model = parserObjFile(tetrahedral_obj, true);
+                break;
+            case "cube":
+                state.model = getHollowCube();
+                break;
+            case "icosahedron":
+                state.model = parserObjFile(icosahedron_obj, true);
+                break;
+        }
+    }
+
+    document.getElementById('obj-input').addEventListener('change', callbackFile, false);
+    document.forms["model"].elements["bentuk"].forEach((item, i) => {
+        item.onclick = callbackModel;
+    });
+
+
+
+
+    // -------------------- Rotation --------------------
     document.getElementById("rotasiX").addEventListener("input", (e) => {
         state.transformation.rotation[0] = (Math.PI / 180) * e.target.value;
     });
@@ -331,6 +215,75 @@ function setUIEventListener() {
 
     document.getElementById("scalingZ").addEventListener("input", (e) => {
         state.transformation.scale[2] = e.target.value;
+    });
+
+
+
+
+
+
+
+
+    // -------------------- Camera --------------------
+    // Add listener for slider change in eye-x position
+    document.getElementById("eye-x").oninput = function () {
+        this.nextElementSibling.value = this.value;
+        eye[0] = parseFloat(this.value);
+        // cameraMatrix = m4.lookAt(eye, center, up);
+    };
+
+    document.getElementById("eye-y").oninput = function () {
+        this.nextElementSibling.value = this.value;
+        eye[1] = parseFloat(this.value);
+        // cameraMatrix = m4.lookAt(eye, center, up);
+    };
+
+    document.getElementById("eye-z").oninput = function () {
+        this.nextElementSibling.value = this.value;
+        eye[2] = parseFloat(this.value);
+        // cameraMatrix = m4.lookAt(eye, center, up);
+    };
+
+    document.getElementById("center-x").oninput = function () {
+        this.nextElementSibling.value = this.value;
+        center[0] = parseFloat(this.value);
+        // cameraMatrix = m4.lookAt(eye, center, up);
+    };
+
+    document.getElementById("center-y").oninput = function () {
+        this.nextElementSibling.value = this.value;
+        center[1] = parseFloat(this.value);
+        // cameraMatrix = m4.lookAt(eye, center, up);
+    };
+
+    document.getElementById("center-z").oninput = function () {
+        this.nextElementSibling.value = this.value;
+        center[2] = parseFloat(this.value);
+        // cameraMatrix = m4.lookAt(eye, center, up);
+    };
+
+    document.getElementById("up-x").oninput = function () {
+        this.nextElementSibling.value = this.value;
+        up[0] = parseFloat(this.value);
+        // cameraMatrix = m4.lookAt(eye, center, up);
+    };
+
+    document.getElementById("up-y").oninput = function () {
+        this.nextElementSibling.value = this.value;
+        up[1] = parseFloat(this.value);
+        // cameraMatrix = m4.lookAt(eye, center, up);
+    };
+
+    document.getElementById("up-z").oninput = function () {
+        this.nextElementSibling.value = this.value;
+        up[2] = parseFloat(this.value);
+        // cameraMatrix = m4.lookAt(eye, center, up);
+    };
+
+
+    // -------------------- Reset --------------------
+    document.getElementById("reset").addEventListener("click", () => {
+        setDefaultState();
     });
 }
 
