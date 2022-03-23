@@ -6,7 +6,6 @@ import { m4 } from './matUtils.js';
 
 
 var state;
-var transformMatrix;
 
 function setDefaultState() {
     state = {
@@ -22,7 +21,9 @@ function setDefaultState() {
             eye   : [0, 0, 0],
             center: [0, 0, 0],
             up    : [0, 0, 1]
-        }
+        },
+
+        useLight: true,
     };
 }
 
@@ -53,22 +54,24 @@ function main() {
     setDefaultState();
     setUIEventListener();
 
+    var transformMatrix;
     // Initial matrices
     // var transformMatrix = m4.identity();
     // var cameraMatrix   = m4.identity();
 
     // -- Ritual WebGL Create Program --
     const canvas = document.getElementById('canvas');
-    const gl = canvas.getContext('webgl');
+    const gl     = canvas.getContext('webgl');
 
     if (!gl) {
         alert('Browsermu jelek');
         return;
     }
 
-    var shaderProgram = webglCreateShaderProgram(gl, 'vertex-shader-3d', 'fragment-shader-3d');
+    var lightingShaderProgram = webglCreateShaderProgram(gl, 'vertex-shader-3d-light', 'fragment-shader-3d-light');
+    var flatShaderProgram     = webglCreateShaderProgram(gl, 'vertex-shader-3d-flat', 'fragment-shader-3d-flat');
 
-    gl.useProgram(shaderProgram);
+    gl.useProgram(lightingShaderProgram);
 
     // -- Create buffer & pointer --
     var vertexBuffer = gl.createBuffer();
@@ -77,9 +80,15 @@ function main() {
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
-    var coordLoc           = gl.getAttribLocation(shaderProgram, "coordinates");
-    var transformMatrixLoc = gl.getUniformLocation(shaderProgram, "transformationMatrix");
-    var colorLoc           = gl.getUniformLocation(shaderProgram, "userColor");
+    var lightCoordLoc = gl.getAttribLocation(lightingShaderProgram, "coordinates");
+    var lightTrMatLoc = gl.getUniformLocation(lightingShaderProgram, "transformationMatrix");
+    var lightColorLoc = gl.getUniformLocation(lightingShaderProgram, "userColor");
+
+    var flatCoordLoc = gl.getAttribLocation(flatShaderProgram, "coordinates");
+    var flatTrMatLoc = gl.getUniformLocation(flatShaderProgram, "transformationMatrix");
+    var flatColorLoc = gl.getUniformLocation(flatShaderProgram, "userColor");
+
+
     // var modelViewMatrixLoc = gl.getUniformLocation(shaderProgram, "modelViewMatrix");
 
     window.requestAnimationFrame(render);
@@ -106,11 +115,22 @@ function main() {
         gl.enable(gl.DEPTH_TEST);
         gl.enable(gl.CULL_FACE);
 
+        if (state.useLight) {
+            gl.useProgram(lightingShaderProgram);
+            gl.vertexAttribPointer(lightCoordLoc, 3, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(lightCoordLoc);
+            gl.uniformMatrix4fv(lightTrMatLoc, false, new Float32Array(transformMatrix));
+            gl.uniform3f(lightColorLoc, 1, 0.5, 0);
+        }
+        else {
+            gl.useProgram(flatShaderProgram);
+            gl.vertexAttribPointer(flatCoordLoc, 3, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(flatCoordLoc);
+            gl.uniformMatrix4fv(flatTrMatLoc, false, new Float32Array(transformMatrix));
+            gl.uniform3f(flatColorLoc, 1, 0.5, 0);
+        }
+
         // Bind vertices and indices
-        gl.vertexAttribPointer(coordLoc, 3, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(coordLoc);
-        gl.uniformMatrix4fv(transformMatrixLoc, false, new Float32Array(transformMatrix));
-        gl.uniform3f(colorLoc, 1, 0.5, 0);
 
         //Compute matrix for the camera
         // var cameraMatrix = m4.identity();
@@ -285,6 +305,11 @@ function setUIEventListener() {
     document.getElementById("reset").addEventListener("click", () => {
         setDefaultState();
     });
+
+    function callbackShading(e) {
+        state.useLight = document.querySelector("#shading").checked;
+    }
+    document.getElementById('shading').addEventListener('change', callbackShading, false);
 }
 
 

@@ -167,7 +167,7 @@
             <!-- Tombol untuk menghidupkan/mematikan shading -->
             <div>
                 <label for="shading">Shading: </label>
-                <input type="checkbox" name="shading" value="shading" checked>
+                <input type="checkbox" id="shading" name="shading" value="shading" checked>
             </div>
 
             <br>
@@ -188,7 +188,7 @@
     <br>
 
     <!-- vertex-shader-3d -->
-    <script id="vertex-shader-3d" type="x-shader/x-vertex">
+    <script id="vertex-shader-3d-light" type="x-shader/x-vertex">
         // attribute vec4 aVertexPosition;
         attribute vec3 coordinates;
 
@@ -207,13 +207,43 @@
         }
     </script>
     <!-- fragment-shader-3d -->
-    <script id="fragment-shader-3d" type="x-shader/x-fragment">
+    <script id="fragment-shader-3d-light" type="x-shader/x-fragment">
         precision mediump float;
         uniform vec3 userColor;
         varying float colorFactor;
 
         void main(void) {
             gl_FragColor = vec4(userColor * colorFactor, 1.0);
+        }
+    </script>
+
+    <!-- vertex-shader-3d -->
+    <script id="vertex-shader-3d-flat" type="x-shader/x-vertex">
+        // attribute vec4 aVertexPosition;
+        attribute vec3 coordinates;
+
+        uniform mat4 transformationMatrix;
+        // uniform mat4 uNormalMatrix;
+        // uniform mat4 ModelViewMatrix;
+        // uniform mat4 uProjectionMatrix;
+
+        varying float colorFactor;
+        void main(void) {
+            // gl_Position = uProjectionMatrix * ModelViewMatrix * aVertexPosition;
+            // gl_Position = aVertexPosition;
+            vec4 transformedPosition = transformationMatrix * vec4(coordinates.xy, coordinates.z * -1.0, 1.0);
+            gl_Position = transformedPosition;
+            colorFactor = min(max((1.0 - transformedPosition.z) / 2.0, 0.0), 1.0);
+        }
+    </script>
+    <!-- fragment-shader-3d -->
+    <script id="fragment-shader-3d-flat" type="x-shader/x-fragment">
+        precision mediump float;
+        uniform vec3 userColor;
+        varying float colorFactor;
+
+        void main(void) {
+            gl_FragColor = vec4(userColor, 1.0);
         }
     </script>
     <script src="scripts/script.js" type="module" defer></script>
