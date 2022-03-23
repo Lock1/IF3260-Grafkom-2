@@ -37,6 +37,26 @@ function main() {
         reader.readAsText(file);
     }
 
+    // Add listener for reset button
+    document.getElementById("reset").addEventListener("click", function() {
+        model = getHollowCube();
+        transformMatrix = getInitialTransformMatrix();
+
+        // Idle animation parameter
+        // Asumsi requestAnimationFrame hingga 60 calls per sec
+        rot_increment = [0, 0, 0];
+        trans_increment = [0, 0, 0];
+        scale_increment = [0.8, 0.8, 0.8];
+
+        // Initial transformation matrix
+        transformMatrix = getInitialTransformMatrix();
+        cameraMatrix = m4.identity();
+        eye = [0, 0, 0];
+        up = [0, 1, 0];
+        center = [0, 0, 0];
+        render();
+    });
+
     // Add listener for slider change in rotation
     document.getElementById("rotasiX").addEventListener("input", (e) => {
         rot_increment[0] = (Math.PI / 180) * e.target.value;
