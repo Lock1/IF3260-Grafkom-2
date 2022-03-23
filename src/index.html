@@ -19,17 +19,19 @@
     <div class="row">
         <div><canvas id="canvas" width="520" height="520"></canvas></div>
 
-        <div>
+        <!-- FIXME : Optional, rename nama form -->
+        <div><form name="model" id="model" action="">
             <h2>Bentuk</h2>
             <input type="file" id="obj-input"/>
+            <input type="color" id="color_picker" value="#ff5000">
             <!-- radio button untuk memilih bentuk: Cube, Tetrahedral, Prism -->
             <div>
                 <label for="bentuk">Jenis bentuk:</label>
-                <form name="model" id="model">
+                <!-- <form name="model" id="model"> -->
                     <input type="radio" name="bentuk" value="cube" checked>Kubus
                     <input type="radio" name="bentuk" value="tetrahedral">Tetrahedral
                     <input type="radio" name="bentuk" value="icosahedron">Icosahedron
-                </form>
+                <!-- </form> -->
             </div>
 
             <br>
@@ -64,9 +66,9 @@
                 <output>0</output>
 
                 <label for="rotasiZ">Rotasi Z:</label>
-                <input type="range" name="rotasiZ" min="-180" max="180" value="0" id="rotasiZ"
+                <input type="range" name="rotasiZ" min="-180" max="180" value="30" id="rotasiZ"
                     oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
+                <output>30</output>
             </div>
 
             <br>
@@ -92,17 +94,17 @@
 
             <div>
                 <label for="scalingX">Scale X:</label>
-                <input type="range" name="scalingX" min="1" max="10" value="1" id="scalingX"
+                <input type="range" name="scalingX" min="0" max="3" value="1" step="0.1" id="scalingX"
                     oninput="this.nextElementSibling.value = this.value">
                 <output>1</output>
 
                 <label for="scalingY">Scale Y:</label>
-                <input type="range" name="scalingY" min="1" max="10" value="1" id="scalingY"
+                <input type="range" name="scalingY" min="0" max="3" value="1" step="0.1" id="scalingY"
                     oninput="this.nextElementSibling.value = this.value">
                 <output>1</output>
 
                 <label for="scalingZ">Scale Z:</label>
-                <input type="range" name="scalingZ" min="1" max="10" value="1" id="scalingZ"
+                <input type="range" name="scalingZ" min="0" max="3" value="1" step="0.1" id="scalingZ"
                     oninput="this.nextElementSibling.value = this.value">
                 <output>1</output>
             </div>
@@ -113,50 +115,14 @@
 
             <!-- Slider untuk mengubah jarak kamera view untuk mendekat/menjauh dari model-->
             <div>
-                <label for="eye-x">Eye-X:</label>
-                <input type="range" name="eye-x" min="0" id="eye-x" max="50" value="0"
+                <label for="cam-radius">Radius:</label>
+                <input type="range" name="cam-radius" min="0" id="cam-radius" max="1" step="0.005" value="0.1"
                     oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
+                <output>0.1</output>
 
-                <label for="eye-y">Eye-Y:</label>
-                <input type="range" name="eye-y" min="0" id="eye-y" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
-
-                <label for="eye-z">Eye-Z:</label>
-                <input type="range" name="eye-z" min="0" id="eye-z" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
-            </div>
-
-            <br>
-
-            <div>
-                <label for="up-x">Up-X:</label>
-                <input type="range" name="up-x" min="0" id="up-x" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
-
-                <label for="up-y">Up-Y:</label>
-                <input type="range" name="up-y" min="0" id="up-y" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
-
-                <label for="up-z">Up-Z:</label>
-                <input type="range" name="up-z" min="0" id="up-z" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
-            </div>
-
-            <br>
-
-            <div>
-                <label for="center-x">Center-X:</label>
-                <input type="range" name="center-x" min="0" id="center-x" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
-
-                <label for="center-y">Center-Y:</label>
-                <input type="range" name="center-y" min="0" id="center-y" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
-
-                <label for="center-z">Center-Z:</label>
-                <input type="range" name="center-z" min="0" id="center-z" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
+                <label for="eye-y">Angle:</label>
+                <input type="range" name="cam-rotation" min="0" id="cam-rotation" max="360" value="60" oninput="this.nextElementSibling.value = this.value">
+                <output>60</output>
             </div>
 
             <br>
@@ -166,14 +132,14 @@
             <!-- Tombol untuk menghidupkan/mematikan shading -->
             <div>
                 <label for="shading">Shading: </label>
-                <input type="checkbox" name="shading" value="shading" checked>
+                <input type="checkbox" id="shading" name="shading" value="shading" checked>
             </div>
 
             <br>
 
             <!-- Tombol reset ke default view -->
             <div>
-                <input type="submit" id="reset" name="reset" value="Reset">
+                <input type="reset" id="reset" name="reset" value="Reset">
             </div>
 
             <br>
@@ -182,35 +148,49 @@
             <div>
                 <input type="submit" name="help" onclick="window.open('./help.html','_blank')" value="Help">
             </div>
-        </div>
+        </div></form>
     </div>
     <br>
 
     <!-- vertex-shader-3d -->
-    <script id="vertex-shader-3d-cube" type="x-shader/x-vertex">
-        attribute vec4 aVertexPosition;
+    <script id="vertex-shader-3d" type="x-shader/x-vertex">
         attribute vec3 coordinates;
+        uniform float fudgeFactor;
 
         uniform mat4 transformationMatrix;
-        uniform mat4 uNormalMatrix;
-        uniform mat4 ModelViewMatrix;
         uniform mat4 uProjectionMatrix;
-
         varying float colorFactor;
-        void main() {
-            gl_Position = uProjectionMatrix * ModelViewMatrix * aVertexPosition;
-            vec4 transformedPosition = transformationMatrix * vec4(coordinates.xy, coordinates.z * -1.0, 1.0);
-            gl_Position = transformedPosition;
-            colorFactor = min(max((1.0 - transformedPosition.z) / 2.0, 0.0), 1.0);
+
+        void main(void) {
+            vec4 transformedPos = transformationMatrix * vec4(coordinates.xy, coordinates.z * -1.0, 1.0);
+            vec4 projectedPos   = uProjectionMatrix * transformedPos;
+            if (fudgeFactor < 0.01)
+                gl_Position = projectedPos;
+            else {
+                float zDivider = 2.0 + projectedPos.z * fudgeFactor;
+                gl_Position = vec4(projectedPos.xy / zDivider, projectedPos.zw);
+            }
+            colorFactor = min(max((1.0 - transformedPos.z) / 2.0, 0.0), 1.0);
         }
     </script>
-    <!-- fragment-shader-3d -->
-    <script id="fragment-shader-3d-cube" type="x-shader/x-fragment">
+
+    <script id="fragment-shader-3d-light" type="x-shader/x-fragment">
         precision mediump float;
         uniform vec3 userColor;
         varying float colorFactor;
+
         void main(void) {
             gl_FragColor = vec4(userColor * colorFactor, 1.0);
+        }
+    </script>
+
+    <script id="fragment-shader-3d-flat" type="x-shader/x-fragment">
+        precision mediump float;
+        uniform vec3 userColor;
+        varying float colorFactor;
+
+        void main(void) {
+            gl_FragColor = vec4(userColor, 1.0);
         }
     </script>
     <script src="scripts/script.js" type="module" defer></script>
