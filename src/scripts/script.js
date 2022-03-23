@@ -4,17 +4,41 @@ import { getCube, getHollowCube, parserObjFile } from './model.js';
 import { tetrahedral_obj, icosahedron_obj, cube_obj } from './builtin-obj-models.js';
 import { m4 } from './matUtils.js';
 
-function getInitialTransformMatrix() {
-    var transformMatrix = translationMatrix(0, 0, 0); // Just empty matrix
-    var translation = [0, 0, 0];
-    var scale = [0.8, 0.8, 0.8];
-    var rotation = [0, 0, 0];
 
-    transformMatrix = matrixMult(scaleMatrix(scale[0], scale[1], scale[2]), transformMatrix);
-    transformMatrix = matrixMult(translationMatrix(translation[0], translation[1], translation[2]), transformMatrix);
+var state;
+var transformMatrix;
+
+function setDefaultState() {
+    state = {
+        model: getHollowCube(),
+
+        transformation: {
+            translation: [0, 0, 0],
+            rotation   : [0, 0, 0],
+            scale      : [1, 1, 1]
+        },
+
+        view: {
+            eye   : [0, 0, 0],
+            center: [0, 0, 0],
+            up    : [0, 0, 1]
+        }
+    };
+}
+
+
+function computeTransformMatrix() {
+    var transformMatrix;
+    var translation = state.transformation.translation;
+    var scale       = state.transformation.scale;
+    var rotation    = state.transformation.rotation;
+
+    transformMatrix = scaleMatrix(scale[0], scale[1], scale[2]);
     transformMatrix = matrixMult(rotationMatrix(rotation[0], rotation[1], rotation[2]), transformMatrix);
+    transformMatrix = matrixMult(translationMatrix(translation[0], translation[1], translation[2]), transformMatrix);
     return transformMatrix;
 }
+
 
 function main() {
     // Variable for eye position, center position and up vector
@@ -37,10 +61,12 @@ function main() {
         reader.readAsText(file);
     }
 
+    setDefaultState();
+    setUIEventListener();
     // Add listener for reset button
     document.getElementById("reset").addEventListener("click", function () {
         model = getHollowCube();
-        transformMatrix = getInitialTransformMatrix();
+        transformMatrix = m4.identity();
 
         // Idle animation parameter
         // Asumsi requestAnimationFrame hingga 60 calls per sec
@@ -49,68 +75,11 @@ function main() {
         scale_increment = [0.8, 0.8, 0.8];
 
         // Initial transformation matrix
-        transformMatrix = getInitialTransformMatrix();
+        transformMatrix = m4.identity();
         cameraMatrix = m4.identity();
         eye = [0, 0, 0];
         up = [0, 1, 0];
         center = [0, 0, 0];
-        render();
-    });
-
-    // Add listener for slider change in rotation
-    document.getElementById("rotasiX").addEventListener("input", (e) => {
-        rot_increment[0] = (Math.PI / 180) * e.target.value;
-        transformMatrix = rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]);
-        render();
-    });
-
-    document.getElementById("rotasiY").addEventListener("input", (e) => {
-        rot_increment[1] = (Math.PI / 180) * e.target.value;
-        transformMatrix = rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]);
-        render();
-    });
-
-    document.getElementById("rotasiZ").addEventListener("input", (e) => {
-        rot_increment[2] = (Math.PI / 180) * e.target.value;
-        transformMatrix = rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]);
-        render();
-    });
-
-    // Add listener for slider change in translation
-    document.getElementById("translasiX").addEventListener("input", (e) => {
-        trans_increment[0] = e.target.value / 100;
-        transformMatrix = translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]);
-        render();
-    });
-
-    document.getElementById("translasiY").addEventListener("input", (e) => {
-        trans_increment[1] = e.target.value / 100;
-        transformMatrix = translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]);
-        render();
-    });
-
-    document.getElementById("translasiZ").addEventListener("input", (e) => {
-        trans_increment[2] = e.target.value / 100;
-        transformMatrix = translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]);
-        render();
-    });
-
-    // Add listener for slider change in scaling
-    document.getElementById("scalingX").addEventListener("input", (e) => {
-        scale_increment[0] = e.target.value;
-        transformMatrix = scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]);
-        render();
-    });
-
-    document.getElementById("scalingY").addEventListener("input", (e) => {
-        scale_increment[1] = e.target.value;
-        transformMatrix = scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]);
-        render();
-    });
-
-    document.getElementById("scalingZ").addEventListener("input", (e) => {
-        scale_increment[2] = e.target.value;
-        transformMatrix = scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]);
         render();
     });
 
@@ -201,7 +170,7 @@ function main() {
         rot_increment = [0, 0, 0];
         trans_increment = [0, 0, 0];
         scale_increment = [0.8, 0.8, 0.8];
-        transformMatrix = getInitialTransformMatrix();
+        transformMatrix =  m4.identity();
         render();
     });
 
@@ -239,7 +208,7 @@ function main() {
     var scale_increment = [0.8, 0.8, 0.8];
 
     // Initial transformation matrix
-    var transformMatrix = getInitialTransformMatrix();
+    var transformMatrix = m4.identity();
     var cameraMatrix = m4.identity();
 
     // -- Ritual WebGL Create Program --
@@ -251,21 +220,21 @@ function main() {
         return;
     }
 
-    var shaderProgram = webglCreateShaderProgram(gl, 'vertex-shader-3d-cube', 'fragment-shader-3d-cube');
+    var shaderProgram = webglCreateShaderProgram(gl, 'vertex-shader-3d', 'fragment-shader-3d');
 
     gl.useProgram(shaderProgram);
 
     // -- Create buffer & pointer --
     var vertexBuffer = gl.createBuffer();
-    var indexBuffer = gl.createBuffer();
+    var indexBuffer  = gl.createBuffer();
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
-    var coordLoc = gl.getAttribLocation(shaderProgram, "coordinates");
+    var coordLoc           = gl.getAttribLocation(shaderProgram, "coordinates");
     var transformMatrixLoc = gl.getUniformLocation(shaderProgram, "transformationMatrix");
-    var colorLoc = gl.getUniformLocation(shaderProgram, "userColor");
-    var modelViewMatrixLoc = gl.getUniformLocation(shaderProgram, "modelViewMatrix");
+    var colorLoc           = gl.getUniformLocation(shaderProgram, "userColor");
+    // var modelViewMatrixLoc = gl.getUniformLocation(shaderProgram, "modelViewMatrix");
 
     window.requestAnimationFrame(render);
 
@@ -279,11 +248,13 @@ function main() {
         // transformMatrix = scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]);
 
         // plz don't comment these lines, somehow camera control doesn't work if this get commented out
-        transformMatrix = matrixMult(transformMatrix, translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]));
-        transformMatrix = matrixMult(transformMatrix, rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]));
-        transformMatrix = matrixMult(transformMatrix, scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]));
+        // transformMatrix = matrixMult(transformMatrix, translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]));
+        // transformMatrix = matrixMult(transformMatrix, rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]));
+        // transformMatrix = matrixMult(transformMatrix, scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]));
 
         // Clear canvas & set states
+        transformMatrix = computeTransformMatrix();
+
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.enable(gl.DEPTH_TEST);
@@ -293,30 +264,74 @@ function main() {
         gl.vertexAttribPointer(coordLoc, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(coordLoc);
         gl.uniformMatrix4fv(transformMatrixLoc, false, new Float32Array(transformMatrix));
-        //Compute matrix for the camera
-        var cameraMatrix = m4.identity();
-
-        cameraMatrix = m4.lookAt(eye, center, up);
-
-        var viewMatrix = m4.inverse(cameraMatrix);
-
-        viewMatrix = m4.xRotate(viewMatrix, -Math.PI / 2);
-        viewMatrix = m4.yRotate(viewMatrix, -Math.PI / 2);
-        viewMatrix = m4.zRotate(viewMatrix, -Math.PI / 2);
-
-        // Compute matrix for the model
-        var modelMatrix = m4.identity();
-        var modelViewMatrix = m4.multiply(viewMatrix, modelMatrix);
-        gl.uniformMatrix4fv(modelViewMatrixLoc,false,modelViewMatrix);
         gl.uniform3f(colorLoc, 1, 0.5, 0);
 
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
+        //Compute matrix for the camera
+        // var cameraMatrix = m4.identity();
+        //
+        // cameraMatrix = m4.lookAt(eye, center, up);
+        //
+        // var viewMatrix = m4.inverse(cameraMatrix);
+        //
+        // viewMatrix = m4.xRotate(viewMatrix, -Math.PI / 2);
+        // viewMatrix = m4.yRotate(viewMatrix, -Math.PI / 2);
+        // viewMatrix = m4.zRotate(viewMatrix, -Math.PI / 2);
+
+        // Compute matrix for the model
+        // var modelMatrix = m4.identity();
+        // var modelViewMatrix = m4.identity();
+        // gl.uniformMatrix4fv(modelViewMatrixLoc,false,modelViewMatrix);
+        // gl.uniform3f(colorLoc, 1, 0.5, 0);
+
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(state.model.vertices), gl.STATIC_DRAW);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(state.model.indices), gl.STATIC_DRAW);
 
         // Draw
-        gl.drawElements(gl.TRIANGLES, model.numPoints, gl.UNSIGNED_SHORT, 0);
-        // window.requestAnimationFrame(render);
+        gl.drawElements(gl.TRIANGLES, state.model.numPoints, gl.UNSIGNED_SHORT, 0);
+        window.requestAnimationFrame(render);
     }
+}
+
+
+function setUIEventListener() {
+    // -------------------- Rotation --------------------
+    document.getElementById("rotasiX").addEventListener("input", (e) => {
+        state.transformation.rotation[0] = (Math.PI / 180) * e.target.value;
+    });
+
+    document.getElementById("rotasiY").addEventListener("input", (e) => {
+        state.transformation.rotation[1] = (Math.PI / 180) * e.target.value;
+    });
+
+    document.getElementById("rotasiZ").addEventListener("input", (e) => {
+        state.transformation.rotation[2] = (Math.PI / 180) * e.target.value;
+    });
+
+    // -------------------- Translation --------------------
+    document.getElementById("translasiX").addEventListener("input", (e) => {
+        state.transformation.translation[0] = e.target.value / 100;
+    });
+
+    document.getElementById("translasiY").addEventListener("input", (e) => {
+        state.transformation.translation[1] = e.target.value / 100;
+    });
+
+    document.getElementById("translasiZ").addEventListener("input", (e) => {
+        state.transformation.translation[2] = e.target.value / 100;
+    });
+
+    // -------------------- Scaling --------------------
+    document.getElementById("scalingX").addEventListener("input", (e) => {
+        state.transformation.scale[0] = e.target.value;
+    });
+
+    document.getElementById("scalingY").addEventListener("input", (e) => {
+        state.transformation.scale[1] = e.target.value;
+    });
+
+    document.getElementById("scalingZ").addEventListener("input", (e) => {
+        state.transformation.scale[2] = e.target.value;
+    });
 }
 
 

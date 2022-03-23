@@ -92,17 +92,17 @@
 
             <div>
                 <label for="scalingX">Scale X:</label>
-                <input type="range" name="scalingX" min="1" max="10" value="1" id="scalingX"
+                <input type="range" name="scalingX" min="0" max="3" value="1" step="0.1" id="scalingX"
                     oninput="this.nextElementSibling.value = this.value">
                 <output>1</output>
 
                 <label for="scalingY">Scale Y:</label>
-                <input type="range" name="scalingY" min="1" max="10" value="1" id="scalingY"
+                <input type="range" name="scalingY" min="0" max="3" value="1" step="0.1" id="scalingY"
                     oninput="this.nextElementSibling.value = this.value">
                 <output>1</output>
 
                 <label for="scalingZ">Scale Z:</label>
-                <input type="range" name="scalingZ" min="1" max="10" value="1" id="scalingZ"
+                <input type="range" name="scalingZ" min="0" max="3" value="1" step="0.1" id="scalingZ"
                     oninput="this.nextElementSibling.value = this.value">
                 <output>1</output>
             </div>
@@ -187,28 +187,30 @@
     <br>
 
     <!-- vertex-shader-3d -->
-    <script id="vertex-shader-3d-cube" type="x-shader/x-vertex">
-        attribute vec4 aVertexPosition;
+    <script id="vertex-shader-3d" type="x-shader/x-vertex">
+        // attribute vec4 aVertexPosition;
         attribute vec3 coordinates;
 
         uniform mat4 transformationMatrix;
-        uniform mat4 uNormalMatrix;
-        uniform mat4 ModelViewMatrix;
-        uniform mat4 uProjectionMatrix;
+        // uniform mat4 uNormalMatrix;
+        // uniform mat4 ModelViewMatrix;
+        // uniform mat4 uProjectionMatrix;
 
         varying float colorFactor;
-        void main() {
-            gl_Position = uProjectionMatrix * ModelViewMatrix * aVertexPosition;
+        void main(void) {
+            // gl_Position = uProjectionMatrix * ModelViewMatrix * aVertexPosition;
+            // gl_Position = aVertexPosition;
             vec4 transformedPosition = transformationMatrix * vec4(coordinates.xy, coordinates.z * -1.0, 1.0);
             gl_Position = transformedPosition;
             colorFactor = min(max((1.0 - transformedPosition.z) / 2.0, 0.0), 1.0);
         }
     </script>
     <!-- fragment-shader-3d -->
-    <script id="fragment-shader-3d-cube" type="x-shader/x-fragment">
+    <script id="fragment-shader-3d" type="x-shader/x-fragment">
         precision mediump float;
         uniform vec3 userColor;
         varying float colorFactor;
+
         void main(void) {
             gl_FragColor = vec4(userColor * colorFactor, 1.0);
         }
