@@ -176,6 +176,15 @@ function main() {
         //console.log(up[2]);
     };
 
+    // Reset button
+    document.getElementById("resetButton").addEventListener("click", () => {
+        rot_increment = [0, 0, 0];
+        trans_increment = [0, 0, 0];
+        scale_increment = [0.8, 0.8, 0.8];
+        transformMatrix = getInitialTransformMatrix();
+        render();
+    });
+
     function callbackModel(e) {
         var selectedModelRadio = document.querySelector("input[name='bentuk']:checked").value;
         switch (selectedModelRadio) {
@@ -250,9 +259,9 @@ function main() {
         // transformMatrix = rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]);
         // transformMatrix = scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]);
 
-        transformMatrix = matrixMult(transformMatrix, translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]));
-        transformMatrix = matrixMult(transformMatrix, rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]));
-        transformMatrix = matrixMult(transformMatrix, scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]));
+        // transformMatrix = matrixMult(transformMatrix, translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]));
+        // transformMatrix = matrixMult(transformMatrix, rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]));
+        // transformMatrix = matrixMult(transformMatrix, scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]));
 
         // Clear canvas & set states
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
