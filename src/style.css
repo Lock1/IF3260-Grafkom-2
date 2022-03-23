@@ -23,3 +23,7 @@ body {
 div {
     padding-left: 20px;
 }
+
+.row {
+    display: flex;
+}

@@ -16,171 +16,173 @@
 <body>
 
     <!-- Canvas -->
-    <canvas id="canvas" width="520" height="520"></canvas>
+    <div class="row">
+        <div><canvas id="canvas" width="520" height="520"></canvas></div>
 
-    <br>
+        <div></div>
+            <h2>Bentuk</h2>
+            <input type="file" id="obj-input"/>
+            <!-- radio button untuk memilih bentuk: Cube, Tetrahedral, Prism -->
+            <div>
+                <label for="bentuk">Jenis bentuk:</label>
+                <form name="model" id="model">
+                    <input type="radio" name="bentuk" value="cube" checked>Kubus
+                    <input type="radio" name="bentuk" value="tetrahedral">Tetrahedral
+                    <input type="radio" name="bentuk" value="icosahedron">Icosahedron
+                </form>
+            </div>
 
-    <h2>Bentuk</h2>
-    <input type="file" id="obj-input"/>
-    <!-- radio button untuk memilih bentuk: Cube, Tetrahedral, Prism -->
-    <div>
-        <label for="bentuk">Jenis bentuk:</label>
-        <form name="model" id="model">
-            <input type="radio" name="bentuk" value="cube" checked>Kubus
-            <input type="radio" name="bentuk" value="tetrahedral">Tetrahedral
-            <input type="radio" name="bentuk" value="icosahedron">Icosahedron
-        </form>
-    </div>
+            <br>
 
-    <br>
+            <h2>Proyeksi</h2>
 
-    <h2>Proyeksi</h2>
+            <!-- Radio button untuk menentukan jenis proyeksi: Orthographic, Oblique, Perspective-->
+            <div>
+                <label for="proyeksi">Jenis proyeksi:</label>
+                <input type="radio" name="proyeksi" value="orthographic" checked>Orthographic
+                <input type="radio" name="proyeksi" value="oblique">Oblique
+                <input type="radio" name="proyeksi" value="perspective">Perspective
+            </div>
 
-    <!-- Radio button untuk menentukan jenis proyeksi: Orthographic, Oblique, Perspective-->
-    <div>
-        <label for="proyeksi">Jenis proyeksi:</label>
-        <input type="radio" name="proyeksi" value="orthographic" checked>Orthographic
-        <input type="radio" name="proyeksi" value="oblique">Oblique
-        <input type="radio" name="proyeksi" value="perspective">Perspective
-    </div>
+            <br>
 
-    <br>
+            <h2>Rotasi, Translasi, Penskalaan</h2>
 
-    <h2>Rotasi, Translasi, Penskalaan</h2>
+            <!-- Slider untuk rotasi, translasi, dan scaling -->
+            <script>
+                
+            </script>
+            <div>
+                <label for="rotasiX">Rotasi X:</label>
+                <input type="range" name="rotasiX" min="-180" max="180" value="0" id="rotasiX"
+                    oninput="this.nextElementSibling.value = this.value">
+                <output>0</output>
 
-    <!-- Slider untuk rotasi, translasi, dan scaling -->
-    <script>
-        
-    </script>
-    <div>
-        <label for="rotasiX">Rotasi X:</label>
-        <input type="range" name="rotasiX" min="-180" max="180" value="0" id="rotasiX"
-            oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
+                <label for="rotasiY">Rotasi Y:</label>
+                <input type="range" name="rotasiY" min="-180" max="180" value="0" id="rotasiY"
+                    oninput="this.nextElementSibling.value = this.value">
+                <output>0</output>
 
-        <label for="rotasiY">Rotasi Y:</label>
-        <input type="range" name="rotasiY" min="-180" max="180" value="0" id="rotasiY"
-            oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
+                <label for="rotasiZ">Rotasi Z:</label>
+                <input type="range" name="rotasiZ" min="-180" max="180" value="0" id="rotasiZ"
+                    oninput="this.nextElementSibling.value = this.value">
+                <output>0</output>
+            </div>
 
-        <label for="rotasiZ">Rotasi Z:</label>
-        <input type="range" name="rotasiZ" min="-180" max="180" value="0" id="rotasiZ"
-            oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
-    </div>
+            <br>
 
-    <br>
+            <div>
+                <label for="translasiX">Translasi X:</label>
+                <input type="range" name="translasiX" min="-100" max="100" value="0" id="translasiX"
+                    oninput="this.nextElementSibling.value = this.value">
+                <output>0</output>
 
-    <div>
-        <label for="translasiX">Translasi X:</label>
-        <input type="range" name="translasiX" min="-100" max="100" value="0" id="translasiX"
-            oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
+                <label for="translasiY">Translasi Y:</label>
+                <input type="range" name="translasiY" min="-100" max="100" value="0" id="translasiY"
+                    oninput="this.nextElementSibling.value = this.value">
+                <output>0</output>
 
-        <label for="translasiY">Translasi Y:</label>
-        <input type="range" name="translasiY" min="-100" max="100" value="0" id="translasiY"
-            oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
+                <label for="translasiZ">Translasi Z:</label>
+                <input type="range" name="translasiZ" min="-100" max="100" value="0" id="translasiZ"
+                    oninput="this.nextElementSibling.value = this.value">
+                <output>0</output>
+            </div>
 
-        <label for="translasiZ">Translasi Z:</label>
-        <input type="range" name="translasiZ" min="-100" max="100" value="0" id="translasiZ"
-            oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
-    </div>
+            <br>
 
-    <br>
+            <div>
+                <label for="scalingX">Scale X:</label>
+                <input type="range" name="scalingX" min="1" max="10" value="1" id="scalingX"
+                    oninput="this.nextElementSibling.value = this.value">
+                <output>1</output>
 
-    <div>
-        <label for="scalingX">Scale X:</label>
-        <input type="range" name="scalingX" min="1" max="10" value="1" id="scalingX"
-            oninput="this.nextElementSibling.value = this.value">
-        <output>1</output>
+                <label for="scalingY">Scale Y:</label>
+                <input type="range" name="scalingY" min="1" max="10" value="1" id="scalingY"
+                    oninput="this.nextElementSibling.value = this.value">
+                <output>1</output>
 
-        <label for="scalingY">Scale Y:</label>
-        <input type="range" name="scalingY" min="1" max="10" value="1" id="scalingY"
-            oninput="this.nextElementSibling.value = this.value">
-        <output>1</output>
+                <label for="scalingZ">Scale Z:</label>
+                <input type="range" name="scalingZ" min="1" max="10" value="1" id="scalingZ"
+                    oninput="this.nextElementSibling.value = this.value">
+                <output>1</output>
+            </div>
 
-        <label for="scalingZ">Scale Z:</label>
-        <input type="range" name="scalingZ" min="1" max="10" value="1" id="scalingZ"
-            oninput="this.nextElementSibling.value = this.value">
-        <output>1</output>
-    </div>
+            <br>
 
-    <br>
+            <h2>Setelan Kamera</h2>
 
-    <h2>Setelan Kamera</h2>
+            <!-- Slider untuk mengubah jarak kamera view untuk mendekat/menjauh dari model-->
+            <div>
+                <label for="eye-x">Eye-X:</label>
+                <input type="range" name="eye-x" min="0" id="eye-x" max="50" value="0"
+                    oninput="this.nextElementSibling.value = this.value">
+                <output>0</output>
 
-    <!-- Slider untuk mengubah jarak kamera view untuk mendekat/menjauh dari model-->
-    <div>
-        <label for="eye-x">Eye-X:</label>
-        <input type="range" name="eye-x" min="0" id="eye-x" max="50" value="0"
-            oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
+                <label for="eye-y">Eye-Y:</label>
+                <input type="range" name="eye-y" min="0" id="eye-y" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
+                <output>0</output>
 
-        <label for="eye-y">Eye-Y:</label>
-        <input type="range" name="eye-y" min="0" id="eye-y" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
+                <label for="eye-z">Eye-Z:</label>
+                <input type="range" name="eye-z" min="0" id="eye-z" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
+                <output>0</output>
+            </div>
 
-        <label for="eye-z">Eye-Z:</label>
-        <input type="range" name="eye-z" min="0" id="eye-z" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
-    </div>
+            <br>
 
-    <br>
+            <div>
+                <label for="up-x">Up-X:</label>
+                <input type="range" name="up-x" min="0" id="up-x" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
+                <output>0</output>
 
-    <div>
-        <label for="up-x">Up-X:</label>
-        <input type="range" name="up-x" min="0" id="up-x" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
+                <label for="up-y">Up-Y:</label>
+                <input type="range" name="up-y" min="0" id="up-y" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
+                <output>0</output>
 
-        <label for="up-y">Up-Y:</label>
-        <input type="range" name="up-y" min="0" id="up-y" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
+                <label for="up-z">Up-Z:</label>
+                <input type="range" name="up-z" min="0" id="up-z" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
+                <output>0</output>
+            </div>
 
-        <label for="up-z">Up-Z:</label>
-        <input type="range" name="up-z" min="0" id="up-z" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
-    </div>
+            <br>
 
-    <br>
+            <div>
+                <label for="center-x">Center-X:</label>
+                <input type="range" name="center-x" min="0" id="center-x" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
+                <output>0</output>
 
-    <div>
-        <label for="center-x">Center-X:</label>
-        <input type="range" name="center-x" min="0" id="center-x" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
+                <label for="center-y">Center-Y:</label>
+                <input type="range" name="center-y" min="0" id="center-y" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
+                <output>0</output>
 
-        <label for="center-y">Center-Y:</label>
-        <input type="range" name="center-y" min="0" id="center-y" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
+                <label for="center-z">Center-Z:</label>
+                <input type="range" name="center-z" min="0" id="center-z" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
+                <output>0</output>
+            </div>
 
-        <label for="center-z">Center-Z:</label>
-        <input type="range" name="center-z" min="0" id="center-z" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
-    </div>
+            <br>
 
-    <br>
+            <h2>Tombol Utilitas</h2>
 
-    <h2>Tombol Utilitas</h2>
+            <!-- Tombol untuk menghidupkan/mematikan shading -->
+            <div>
+                <label for="shading">Shading: </label>
+                <input type="checkbox" name="shading" value="shading" checked>
+            </div>
 
-    <!-- Tombol untuk menghidupkan/mematikan shading -->
-    <div>
-        <label for="shading">Shading: </label>
-        <input type="checkbox" name="shading" value="shading" checked>
-    </div>
+            <br>
 
-    <br>
+            <!-- Tombol reset ke default view -->
+            <div>
+                <input type="submit" id="reset" name="reset" value="Reset">
+            </div>
 
-    <!-- Tombol reset ke default view -->
-    <div>
-        <input type="submit" id="reset" name="reset" value="Reset">
-    </div>
+            <br>
 
-    <br>
-
-    <!-- Tombol menu help yang menampilkan alert help -->
-    <div>
-        <input type="submit" name="help" onclick="window.open('./help.html','_blank')" value="Help">
+            <!-- Tombol menu help yang menampilkan alert help -->
+            <div>
+                <input type="submit" name="help" onclick="window.open('./help.html','_blank')" value="Help">
+            </div>
+        </div>
     </div>
 
     <br>
