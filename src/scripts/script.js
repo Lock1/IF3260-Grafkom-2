@@ -197,7 +197,7 @@ function main() {
     };
 
     // Reset button
-    document.getElementById("resetButton").addEventListener("click", () => {
+    document.getElementById("reset").addEventListener("click", () => {
         rot_increment = [0, 0, 0];
         trans_increment = [0, 0, 0];
         scale_increment = [0.8, 0.8, 0.8];
@@ -253,8 +253,6 @@ function main() {
 
     var shaderProgram = webglCreateShaderProgram(gl, 'vertex-shader-3d-cube', 'fragment-shader-3d-cube');
 
-    var initmodelViewMatrix = gl.getUniformLocation(shaderProgram, 'uModelViewMatrix')
-
     gl.useProgram(shaderProgram);
 
     // -- Create buffer & pointer --
@@ -267,6 +265,7 @@ function main() {
     var coordLoc = gl.getAttribLocation(shaderProgram, "coordinates");
     var transformMatrixLoc = gl.getUniformLocation(shaderProgram, "transformationMatrix");
     var colorLoc = gl.getUniformLocation(shaderProgram, "userColor");
+    var modelViewMatrixLoc = gl.getUniformLocation(shaderProgram, "modelViewMatrix");
 
     window.requestAnimationFrame(render);
 
@@ -279,9 +278,10 @@ function main() {
         // transformMatrix = rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]);
         // transformMatrix = scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]);
 
-        // transformMatrix = matrixMult(transformMatrix, translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]));
-        // transformMatrix = matrixMult(transformMatrix, rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]));
-        // transformMatrix = matrixMult(transformMatrix, scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]));
+        // plz don't comment these lines, somehow camera control doesn't work if this get commented out
+        transformMatrix = matrixMult(transformMatrix, translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]));
+        transformMatrix = matrixMult(transformMatrix, rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]));
+        transformMatrix = matrixMult(transformMatrix, scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]));
 
         // Clear canvas & set states
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -293,11 +293,6 @@ function main() {
         gl.vertexAttribPointer(coordLoc, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(coordLoc);
         gl.uniformMatrix4fv(transformMatrixLoc, false, new Float32Array(transformMatrix));
-        gl.uniform3f(colorLoc, 1, 0.5, 0);
-
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
-
         //Compute matrix for the camera
         var cameraMatrix = m4.identity();
 
@@ -312,11 +307,11 @@ function main() {
         // Compute matrix for the model
         var modelMatrix = m4.identity();
         var modelViewMatrix = m4.multiply(viewMatrix, modelMatrix);
+        gl.uniformMatrix4fv(modelViewMatrixLoc,false,modelViewMatrix);
+        gl.uniform3f(colorLoc, 1, 0.5, 0);
 
-        gl.uniformMatrix4fv(
-            initmodelViewMatrix,
-            false,
-            modelViewMatrix);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
 
         // Draw
         gl.drawElements(gl.TRIANGLES, model.numPoints, gl.UNSIGNED_SHORT, 0);
