@@ -9,7 +9,7 @@ var state;
 
 function setDefaultState() {
     state = {
-        model: getHollowCube(),
+        model: parserObjFile(cube_obj, true),
 
         transformation: {
             translation: [0, 0, 0],
@@ -166,7 +166,7 @@ function setUIEventListener() {
                 state.model = parserObjFile(tetrahedral_obj, true);
                 break;
             case "cube":
-                state.model = getHollowCube();
+                state.model = parserObjFile(cube_obj, true);
                 break;
             case "icosahedron":
                 state.model = parserObjFile(icosahedron_obj, true);
