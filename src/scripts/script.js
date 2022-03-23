@@ -39,52 +39,58 @@ function main() {
 
     // Add listener for slider change in rotation
     document.getElementById("rotasiX").addEventListener("input", (e) => {
-        rot_increment[0] = (Math.PI / 180) * e.target.value / 60;
-        console.log(rot_increment[0]);
+        rot_increment[0] = (Math.PI / 180) * e.target.value;
+        transformMatrix = rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]);
         render();
     });
 
     document.getElementById("rotasiY").addEventListener("input", (e) => {
-        rot_increment[1] = (Math.PI / 180) * e.target.value / 60;
-        console.log(rot_increment[1]);
+        rot_increment[1] = (Math.PI / 180) * e.target.value;
+        transformMatrix = rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]);
         render();
     });
 
     document.getElementById("rotasiZ").addEventListener("input", (e) => {
-        rot_increment[2] = (Math.PI / 180) * e.target.value / 60;
-        console.log(rot_increment[2]);
+        rot_increment[2] = (Math.PI / 180) * e.target.value;
+        transformMatrix = rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]);
         render();
     });
 
     // Add listener for slider change in translation
     document.getElementById("translasiX").addEventListener("input", (e) => {
         trans_increment[0] = e.target.value / 100;
+        transformMatrix = translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]);
         render();
     });
 
     document.getElementById("translasiY").addEventListener("input", (e) => {
         trans_increment[1] = e.target.value / 100;
+        transformMatrix = translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]);
         render();
     });    
 
     document.getElementById("translasiZ").addEventListener("input", (e) => {
         trans_increment[2] = e.target.value / 100;
+        transformMatrix = translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]);
         render();
     });
 
     // Add listener for slider change in scaling
     document.getElementById("scalingX").addEventListener("input", (e) => {
         scale_increment[0] = e.target.value;
+        transformMatrix = scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]);
         render();
     });
 
     document.getElementById("scalingY").addEventListener("input", (e) => {
         scale_increment[1] = e.target.value;
+        transformMatrix = scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]);
         render();
     });
 
     document.getElementById("scalingZ").addEventListener("input", (e) => {
         scale_increment[2] = e.target.value;
+        transformMatrix = scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]);
         render();
     });
 
@@ -197,7 +203,7 @@ function main() {
 
     // Idle animation parameter
     // Asumsi requestAnimationFrame hingga 60 calls per sec
-    var rot_increment = [Math.PI / 180 * (1 / 60) * 20, Math.PI / 180 * (1 / 60) * 30, 0];
+    var rot_increment = [0, 0, 0];
     var trans_increment = [0, 0, 0];
     var scale_increment = [0.8, 0.8, 0.8];
 
@@ -236,11 +242,10 @@ function main() {
 
     function render() {
         // Idle animation
-        // transformMatrix = projectionMatrix(gl);
-        transformMatrix = matrixMult(transformMatrix, translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]));
-        transformMatrix = matrixMult(transformMatrix, rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]));
-        transformMatrix = matrixMult(transformMatrix, scaleMatrix(scale_increment[0],scale_increment[1],scale_increment[2]));
-        
+        // transformMatrix = getInitialTransformMatrix();
+        // transformMatrix = translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]);
+        // transformMatrix = rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]);
+        // transformMatrix = scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]);
 
         // Clear canvas & set states
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

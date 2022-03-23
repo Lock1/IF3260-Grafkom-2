@@ -82,7 +82,7 @@
             oninput="this.nextElementSibling.value = this.value">
         <output>0</output>
 
-        <label for="translasiZ">Translasi Y:</label>
+        <label for="translasiZ">Translasi Z:</label>
         <input type="range" name="translasiZ" min="-100" max="100" value="0" id="translasiZ"
             oninput="this.nextElementSibling.value = this.value">
         <output>0</output>
@@ -92,19 +92,19 @@
 
     <div>
         <label for="scalingX">Scale X:</label>
-        <input type="range" name="scalingX" min="0.1" max="10" value="1" id="scalingX"
+        <input type="range" name="scalingX" min="1" max="10" value="1" id="scalingX"
             oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
+        <output>1</output>
 
         <label for="scalingY">Scale Y:</label>
-        <input type="range" name="scalingY" min="0.1" max="10" value="1" id="scalingY"
+        <input type="range" name="scalingY" min="1" max="10" value="1" id="scalingY"
             oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
+        <output>1</output>
 
-        <label for="scalingZ">Scale Y:</label>
-        <input type="range" name="scalingZ" min="0.1" max="10" value="1" id="scalingZ"
+        <label for="scalingZ">Scale Z:</label>
+        <input type="range" name="scalingZ" min="1" max="10" value="1" id="scalingZ"
             oninput="this.nextElementSibling.value = this.value">
-        <output>0</output>
+        <output>1</output>
     </div>
 
     <br>
@@ -198,7 +198,7 @@
         varying float colorFactor;
         void main() {
             gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-            vec4 transformedPosition = vec4(coordinates.xy, coordinates.z * -1.0, 1.0) * transformationMatrix;
+            vec4 transformedPosition = transformationMatrix * vec4(coordinates.xy, coordinates.z * -1.0, 1.0);
             gl_Position = transformedPosition;
             colorFactor = min(max((1.0 - transformedPosition.z) / 2.0, 0.0), 1.0);
         }
