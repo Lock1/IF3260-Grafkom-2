@@ -45,6 +45,9 @@ function setDefaultState() {
         useLight      : true,
         projectionType: "orth", // orth, obli, pers
         pickedColor   : [1.0, 0.5, 0.0, 1.0],
+        idleAnimation : true,
+
+        timeoutIdle   : true,
     };
 }
 
@@ -114,6 +117,11 @@ function main() {
 
     function render() {
         // Clear canvas & set states
+        if (state.idleAnimation && state.timeoutIdle) {
+            state.transformation.rotation[0] += Math.PI / 180 * (1 / 60) * 2;
+            state.transformation.rotation[1] += Math.PI / 180 * (1 / 60) * 6;
+        }
+
         transformMatrix = computeTransformMatrix();
 
         if (!mouse_state.dragging) {
@@ -126,8 +134,14 @@ function main() {
         const rotX = document.getElementById("rotasiX");
         const rotY = document.getElementById("rotasiY");
 
-        const degreeX =  180 / Math.PI * state.transformation.rotation[0];
-        const degreeY =  180 / Math.PI * state.transformation.rotation[1];
+        if (state.transformation.rotation[0] > Math.PI)
+            state.transformation.rotation[0] = -Math.PI;
+
+        if (state.transformation.rotation[1] > Math.PI)
+            state.transformation.rotation[1] = -Math.PI;
+
+        const degreeX = 180 / Math.PI * state.transformation.rotation[0];
+        const degreeY = 180 / Math.PI * state.transformation.rotation[1];
         rotX.value = degreeX;
         rotY.value = degreeY;
         rotX.nextElementSibling.value = Math.round(degreeX);
@@ -237,7 +251,6 @@ function setUIEventListener() {
 
 
 
-
     // -------------------- Rotation --------------------
     document.getElementById("rotasiX").addEventListener("input", (e) => {
         state.transformation.rotation[0] = (Math.PI / 180) * e.target.value;
@@ -302,10 +315,6 @@ function setUIEventListener() {
         setDefaultState();
     });
 
-    function callbackShading(e) {
-        state.useLight = document.querySelector("#shading").checked;
-    }
-
 
     // -------------------- Color & etc --------------------
     // Sumber : Tugas besar 1
@@ -323,7 +332,17 @@ function setUIEventListener() {
 
     document.getElementById("color_picker").addEventListener('change', getColor, false);
 
+    function callbackShading(e) {
+        state.useLight = document.querySelector("#shading").checked;
+    }
+
+    function callbackIdle(e) {
+        state.idleAnimation = document.querySelector("#idle").checked;
+    }
+
     document.getElementById("shading").addEventListener('change', callbackShading, false);
+
+    document.getElementById("idle").addEventListener('change', callbackIdle, false);
 
     function callbackMouseDown(e) {
         mouse_state.dragging = true;
@@ -331,7 +350,6 @@ function setUIEventListener() {
         mouse_state.origin.y = e.pageY;
         e.preventDefault();
         return false;
-
     }
 
     function callbackMouseUp(e) {
@@ -358,6 +376,18 @@ function setUIEventListener() {
     document.getElementById('canvas').addEventListener("mouseup", callbackMouseUp, false);
     document.getElementById('canvas').addEventListener("mouseout", callbackMouseUp, false);
     document.getElementById('canvas').addEventListener("mousemove", callbackMouseMove, false);
+
+    function callbackTimeoutIdle() {
+        state.timeoutIdle = true;
+    }
+
+    function callbackBodyTimer() {
+        state.timeoutIdle = false;
+        var timer;
+        clearTimeout(timer);
+        timer = setTimeout(callbackTimeoutIdle, 2 * 1000)
+    }
+    document.body.addEventListener("mouseup", callbackBodyTimer, false);
 }
 
 
