@@ -65,9 +65,9 @@
                 <output>0</output>
 
                 <label for="rotasiZ">Rotasi Z:</label>
-                <input type="range" name="rotasiZ" min="-180" max="180" value="0" id="rotasiZ"
+                <input type="range" name="rotasiZ" min="-180" max="180" value="30" id="rotasiZ"
                     oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
+                <output>30</output>
             </div>
 
             <br>
@@ -114,50 +114,14 @@
 
             <!-- Slider untuk mengubah jarak kamera view untuk mendekat/menjauh dari model-->
             <div>
-                <label for="eye-x">Eye-X:</label>
-                <input type="range" name="eye-x" min="0" id="eye-x" max="50" value="0"
+                <label for="cam-radius">Radius:</label>
+                <input type="range" name="cam-radius" min="0" id="cam-radius" max="1" step="0.005" value="0.1"
                     oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
+                <output>0.1</output>
 
-                <label for="eye-y">Eye-Y:</label>
-                <input type="range" name="eye-y" min="0" id="eye-y" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
-
-                <label for="eye-z">Eye-Z:</label>
-                <input type="range" name="eye-z" min="0" id="eye-z" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
-            </div>
-
-            <br>
-
-            <div>
-                <label for="up-x">Up-X:</label>
-                <input type="range" name="up-x" min="0" id="up-x" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
-
-                <label for="up-y">Up-Y:</label>
-                <input type="range" name="up-y" min="0" id="up-y" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
-
-                <label for="up-z">Up-Z:</label>
-                <input type="range" name="up-z" min="0" id="up-z" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
-            </div>
-
-            <br>
-
-            <div>
-                <label for="center-x">Center-X:</label>
-                <input type="range" name="center-x" min="0" id="center-x" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
-
-                <label for="center-y">Center-Y:</label>
-                <input type="range" name="center-y" min="0" id="center-y" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
-
-                <label for="center-z">Center-Z:</label>
-                <input type="range" name="center-z" min="0" id="center-z" max="50" value="0" oninput="this.nextElementSibling.value = this.value">
-                <output>0</output>
+                <label for="eye-y">Angle:</label>
+                <input type="range" name="cam-rotation" min="0" id="cam-rotation" max="360" value="60" oninput="this.nextElementSibling.value = this.value">
+                <output>60</output>
             </div>
 
             <br>
@@ -197,18 +161,15 @@
         varying float colorFactor;
 
         void main(void) {
-            if (fudgeFactor < 0.01) {
-                vec4 transformedPos = transformationMatrix * vec4(coordinates.xy, coordinates.z * -1.0, 1.0);
-                vec4 projectedPos   = uProjectionMatrix * transformedPos;
+            vec4 transformedPos = transformationMatrix * vec4(coordinates.xy, coordinates.z * -1.0, 1.0);
+            vec4 projectedPos   = uProjectionMatrix * transformedPos;
+            if (fudgeFactor < 0.01)
                 gl_Position = projectedPos;
-                colorFactor = min(max((1.0 - transformedPos.z) / 2.0, 0.0), 1.0);
-            }
             else {
-                vec4 transformedPos = transformationMatrix * vec4(coordinates.xy, coordinates.z * -1.0, 1.0);
-                float zDivider = 2.0 + transformedPos.z * fudgeFactor;
-                gl_Position = vec4(transformedPos.xy / zDivider, transformedPos.zw);
-                colorFactor = min(max((1.0 - transformedPos.z) / 2.0, 0.0), 1.0);
+                float zDivider = 2.0 + projectedPos.z * fudgeFactor;
+                gl_Position = vec4(projectedPos.xy / zDivider, projectedPos.zw);
             }
+            colorFactor = min(max((1.0 - transformedPos.z) / 2.0, 0.0), 1.0);
         }
     </script>
 

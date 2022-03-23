@@ -13,18 +13,16 @@ function setDefaultState() {
 
         transformation: {
             translation: [0, 0, 0],
-            rotation   : [0, 0, 0],
+            rotation   : [0, 0, Math.PI / 180 * 30],
             scale      : [1, 1, 1]
         },
 
         view: {
-            eye   : [0, 0, 0],
-            center: [0, 0, 0],
-            up    : [0, 0, 1]
+            rotation: 60,
+            radius  : 0.1,
         },
 
         useLight: true,
-        // projectionType: "obli", // orth, obli, pers
         projectionType: "orth", // orth, obli, pers
     };
 }
@@ -41,12 +39,11 @@ function computeTransformMatrix() {
     return transformMatrix;
 }
 
-function computeCameraMatrix() {
-    var cameraMatrix;
-    // this.nextElementSibling.value = this.value;
-    // eye[0] = parseFloat(this.value);
-    // cameraMatrix = m4.lookAt(eye, center, up);
-    return cameraMatrix;
+function computeViewMatrix() {
+    var viewMatrix;
+    viewMatrix = rotationMatrix(0, state.view.rotation * Math.PI / 180, 0);
+    viewMatrix = matrixMult(viewMatrix, translationMatrix(0, 0, state.view.radius));
+    return m4.inverse(viewMatrix);
 }
 
 
@@ -132,30 +129,13 @@ function main() {
         gl.uniformMatrix4fv(trMatLoc, false, new Float32Array(transformMatrix));
         gl.uniform3f(colorLoc, 1, 0.5, 0); // TODO : Color
 
-        if (state.projectionType === "pers") {
+        if (state.projectionType === "pers")
             gl.uniform1f(fudgeLoc, 1.275);
-        }
         else
             gl.uniform1f(fudgeLoc, 0);
 
-        gl.uniformMatrix4fv(projLoc, false, projectionMatrix(state.projectionType))
-
-        //Compute matrix for the camera
-        // var cameraMatrix = m4.identity();
-        //
-        // cameraMatrix = m4.lookAt(eye, center, up);
-        //
-        // var viewMatrix = m4.inverse(cameraMatrix);
-        //
-        // viewMatrix = m4.xRotate(viewMatrix, -Math.PI / 2);
-        // viewMatrix = m4.yRotate(viewMatrix, -Math.PI / 2);
-        // viewMatrix = m4.zRotate(viewMatrix, -Math.PI / 2);
-
-        // Compute matrix for the model
-        // var modelMatrix = m4.identity();
-        // var modelViewMatrix = m4.identity();
-        // gl.uniformMatrix4fv(modelViewMatrixLoc,false,modelViewMatrix);
-        // gl.uniform3f(colorLoc, 1, 0.5, 0);
+        var viewProjectionMat = matrixMult(projectionMatrix(state.projectionType), computeViewMatrix());
+        gl.uniformMatrix4fv(projLoc, false, viewProjectionMat);
 
         // Bind vertices and indices
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(state.model.vertices), gl.STATIC_DRAW);
@@ -274,58 +254,14 @@ function setUIEventListener() {
 
     // -------------------- Camera --------------------
     // Add listener for slider change in eye-x position
-    document.getElementById("eye-x").oninput = function () {
+    document.getElementById("cam-radius").oninput = function () {
         this.nextElementSibling.value = this.value;
-        eye[0] = parseFloat(this.value);
-        // cameraMatrix = m4.lookAt(eye, center, up);
+        state.view.radius = parseFloat(this.value);
     };
 
-    document.getElementById("eye-y").oninput = function () {
+    document.getElementById("cam-rotation").oninput = function () {
         this.nextElementSibling.value = this.value;
-        eye[1] = parseFloat(this.value);
-        // cameraMatrix = m4.lookAt(eye, center, up);
-    };
-
-    document.getElementById("eye-z").oninput = function () {
-        this.nextElementSibling.value = this.value;
-        eye[2] = parseFloat(this.value);
-        // cameraMatrix = m4.lookAt(eye, center, up);
-    };
-
-    document.getElementById("center-x").oninput = function () {
-        this.nextElementSibling.value = this.value;
-        center[0] = parseFloat(this.value);
-        // cameraMatrix = m4.lookAt(eye, center, up);
-    };
-
-    document.getElementById("center-y").oninput = function () {
-        this.nextElementSibling.value = this.value;
-        center[1] = parseFloat(this.value);
-        // cameraMatrix = m4.lookAt(eye, center, up);
-    };
-
-    document.getElementById("center-z").oninput = function () {
-        this.nextElementSibling.value = this.value;
-        center[2] = parseFloat(this.value);
-        // cameraMatrix = m4.lookAt(eye, center, up);
-    };
-
-    document.getElementById("up-x").oninput = function () {
-        this.nextElementSibling.value = this.value;
-        up[0] = parseFloat(this.value);
-        // cameraMatrix = m4.lookAt(eye, center, up);
-    };
-
-    document.getElementById("up-y").oninput = function () {
-        this.nextElementSibling.value = this.value;
-        up[1] = parseFloat(this.value);
-        // cameraMatrix = m4.lookAt(eye, center, up);
-    };
-
-    document.getElementById("up-z").oninput = function () {
-        this.nextElementSibling.value = this.value;
-        up[2] = parseFloat(this.value);
-        // cameraMatrix = m4.lookAt(eye, center, up);
+        state.view.rotation = parseFloat(this.value);
     };
 
 
@@ -337,7 +273,7 @@ function setUIEventListener() {
     function callbackShading(e) {
         state.useLight = document.querySelector("#shading").checked;
     }
-    document.getElementById('shading').addEventListener('change', callbackShading, false);
+    document.getElementById("shading").addEventListener('change', callbackShading, false);
     document.getElementById("reset").click();
 }
 
