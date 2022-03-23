@@ -1,11 +1,30 @@
 import { translationMatrix, scaleMatrix, matrixMult, rotationMatrix, projectionMatrix } from './math.js';
 import { webglCreateShaderProgram } from './utils.js';
-import { getCube, getHollowCube, parserObjFile } from './model.js';
+import { parserObjFile } from './model.js';
 import { tetrahedral_obj, icosahedron_obj, cube_obj } from './builtin-obj-models.js';
 import { m4 } from './matUtils.js';
 
 
 var state;
+var mouse_state = {
+    dragging: false,
+
+    origin: {
+        x: undefined,
+        y: undefined
+    },
+
+    delta: {
+        x: 0,
+        y: 0,
+    },
+
+    constant: {
+        x: 2 * Math.PI / document.getElementById('canvas').width,
+        y: 2 * Math.PI / document.getElementById('canvas').height
+    }
+}
+
 
 function setDefaultState() {
     state = {
@@ -14,7 +33,8 @@ function setDefaultState() {
         transformation: {
             translation: [0, 0, 0],
             rotation   : [0, 0, Math.PI / 180 * 30],
-            scale      : [1, 1, 1]
+            scale      : [1, 1, 1],
+            mouseRot   : [0, 0]
         },
 
         view: {
@@ -49,8 +69,8 @@ function computeViewMatrix() {
 
 function main() {
     // Set state and event listener
-    setDefaultState();
     setUIEventListener();
+    document.getElementById("reset").click(); // Reset everything to default state
 
     var transformMatrix;
     var cameraMatrix;
@@ -95,6 +115,23 @@ function main() {
     function render() {
         // Clear canvas & set states
         transformMatrix = computeTransformMatrix();
+
+        if (!mouse_state.dragging) {
+            mouse_state.delta.x *= 0.95;
+            mouse_state.delta.y *= 0.95;
+            state.transformation.rotation[1] -= mouse_state.delta.x;
+            state.transformation.rotation[0] -= mouse_state.delta.y;
+        }
+
+        const rotX = document.getElementById("rotasiX");
+        const rotY = document.getElementById("rotasiY");
+
+        const degreeX =  180 / Math.PI * state.transformation.rotation[0];
+        const degreeY =  180 / Math.PI * state.transformation.rotation[1];
+        rotX.value = degreeX;
+        rotY.value = degreeY;
+        rotX.nextElementSibling.value = Math.round(degreeX);
+        rotY.nextElementSibling.value = Math.round(degreeY);
 
         if (state.useLight) {
             var shaderProgram = lightingShaderProgram;
@@ -154,7 +191,7 @@ function setUIEventListener() {
 
         var reader = new FileReader();
         reader.onload = function (e) {
-            state.model = parserObjFile(e.target.result);
+            state.model = parserObjFile(e.target.result, true);
         };
         reader.readAsText(file);
     }
@@ -287,7 +324,40 @@ function setUIEventListener() {
     document.getElementById("color_picker").addEventListener('change', getColor, false);
 
     document.getElementById("shading").addEventListener('change', callbackShading, false);
-    document.getElementById("reset").click();
+
+    function callbackMouseDown(e) {
+        mouse_state.dragging = true;
+        mouse_state.origin.x = e.pageX;
+        mouse_state.origin.y = e.pageY;
+        e.preventDefault();
+        return false;
+
+    }
+
+    function callbackMouseUp(e) {
+        mouse_state.dragging = false;
+    }
+
+    function callbackMouseMove(e) {
+        if (!mouse_state.dragging)
+            return false;
+
+        mouse_state.delta.x = (e.pageX - mouse_state.origin.x) * mouse_state.constant.x;
+        mouse_state.delta.y = (e.pageY - mouse_state.origin.y) * mouse_state.constant.y;
+
+        state.transformation.rotation[1] -= mouse_state.delta.x;
+        state.transformation.rotation[0] -= mouse_state.delta.y;
+
+        mouse_state.origin.x = e.pageX;
+        mouse_state.origin.y = e.pageY;
+
+        e.preventDefault();
+    }
+
+    document.getElementById('canvas').addEventListener("mousedown", callbackMouseDown, false);
+    document.getElementById('canvas').addEventListener("mouseup", callbackMouseUp, false);
+    document.getElementById('canvas').addEventListener("mouseout", callbackMouseUp, false);
+    document.getElementById('canvas').addEventListener("mousemove", callbackMouseMove, false);
 }
 
 
