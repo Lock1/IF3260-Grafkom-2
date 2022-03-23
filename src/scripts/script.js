@@ -67,8 +67,8 @@ function main() {
         return;
     }
 
-    var lightingShaderProgram = webglCreateShaderProgram(gl, 'vertex-shader-3d-light', 'fragment-shader-3d-light');
-    var flatShaderProgram     = webglCreateShaderProgram(gl, 'vertex-shader-3d-flat', 'fragment-shader-3d-flat');
+    var lightingShaderProgram = webglCreateShaderProgram(gl, 'vertex-shader-3d', 'fragment-shader-3d-light');
+    var flatShaderProgram     = webglCreateShaderProgram(gl, 'vertex-shader-3d', 'fragment-shader-3d-flat');
 
     gl.useProgram(lightingShaderProgram);
 
@@ -83,11 +83,13 @@ function main() {
     var lightTrMatLoc  = gl.getUniformLocation(lightingShaderProgram, "transformationMatrix");
     var lightColorLoc  = gl.getUniformLocation(lightingShaderProgram, "userColor");
     var lightPrjMatLoc = gl.getUniformLocation(lightingShaderProgram, "uProjectionMatrix");
+    var lightFudgeLoc  = gl.getUniformLocation(lightingShaderProgram, "fudgeFactor");
 
     var flatCoordLoc  = gl.getAttribLocation(flatShaderProgram, "coordinates");
     var flatTrMatLoc  = gl.getUniformLocation(flatShaderProgram, "transformationMatrix");
     var flatColorLoc  = gl.getUniformLocation(flatShaderProgram, "userColor");
     var flatPrjMatLoc = gl.getUniformLocation(flatShaderProgram, "uProjectionMatrix");
+    var flatFudgeLoc  = gl.getUniformLocation(flatShaderProgram, "fudgeFactor");
 
 
 
@@ -108,6 +110,7 @@ function main() {
             var trMatLoc      = lightTrMatLoc;
             var colorLoc      = lightColorLoc;
             var projLoc       = lightPrjMatLoc;
+            var fudgeLoc      = lightFudgeLoc;
         }
         else {
             var shaderProgram = flatShaderProgram;
@@ -115,6 +118,7 @@ function main() {
             var trMatLoc      = flatTrMatLoc;
             var colorLoc      = flatColorLoc;
             var projLoc       = flatPrjMatLoc;
+            var fudgeLoc      = flatFudgeLoc;
         }
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -126,7 +130,13 @@ function main() {
         gl.vertexAttribPointer(coordLoc, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(coordLoc);
         gl.uniformMatrix4fv(trMatLoc, false, new Float32Array(transformMatrix));
-        gl.uniform3f(colorLoc, 1, 0.5, 0);
+        gl.uniform3f(colorLoc, 1, 0.5, 0); // TODO : Color
+
+        if (state.projectionType === "pers") {
+            gl.uniform1f(fudgeLoc, 1.275);
+        }
+        else
+            gl.uniform1f(fudgeLoc, 0);
 
         gl.uniformMatrix4fv(projLoc, false, projectionMatrix(state.projectionType))
 

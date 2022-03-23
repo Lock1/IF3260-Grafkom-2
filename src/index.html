@@ -188,26 +188,30 @@
     <br>
 
     <!-- vertex-shader-3d -->
-    <script id="vertex-shader-3d-light" type="x-shader/x-vertex">
-        // attribute vec4 aVertexPosition;
+    <script id="vertex-shader-3d" type="x-shader/x-vertex">
         attribute vec3 coordinates;
+        uniform float fudgeFactor;
 
         uniform mat4 transformationMatrix;
-        // uniform mat4 uNormalMatrix;
-        // uniform mat4 ModelViewMatrix;
         uniform mat4 uProjectionMatrix;
-
         varying float colorFactor;
+
         void main(void) {
-            // gl_Position = uProjectionMatrix * ModelViewMatrix * aVertexPosition;
-            // gl_Position = aVertexPosition;
-            vec4 transformedPos = transformationMatrix * vec4(coordinates.xy, coordinates.z * -1.0, 1.0);
-            vec4 projectedPos   = uProjectionMatrix * transformedPos;
-            gl_Position = projectedPos;
-            colorFactor = min(max((1.0 - transformedPos.z) / 2.0, 0.0), 1.0);
+            if (fudgeFactor < 0.01) {
+                vec4 transformedPos = transformationMatrix * vec4(coordinates.xy, coordinates.z * -1.0, 1.0);
+                vec4 projectedPos   = uProjectionMatrix * transformedPos;
+                gl_Position = projectedPos;
+                colorFactor = min(max((1.0 - transformedPos.z) / 2.0, 0.0), 1.0);
+            }
+            else {
+                vec4 transformedPos = transformationMatrix * vec4(coordinates.xy, coordinates.z * -1.0, 1.0);
+                float zDivider = 2.0 + transformedPos.z * fudgeFactor;
+                gl_Position = vec4(transformedPos.xy / zDivider, transformedPos.zw);
+                colorFactor = min(max((1.0 - transformedPos.z) / 2.0, 0.0), 1.0);
+            }
         }
     </script>
-    <!-- fragment-shader-3d -->
+
     <script id="fragment-shader-3d-light" type="x-shader/x-fragment">
         precision mediump float;
         uniform vec3 userColor;
@@ -218,28 +222,6 @@
         }
     </script>
 
-    <!-- vertex-shader-3d -->
-    <script id="vertex-shader-3d-flat" type="x-shader/x-vertex">
-        // attribute vec4 aVertexPosition;
-        attribute vec3 coordinates;
-
-        uniform mat4 transformationMatrix;
-        // uniform mat4 uNormalMatrix;
-        // uniform mat4 ModelViewMatrix;
-        uniform mat4 uProjectionMatrix;
-
-        varying float colorFactor;
-        void main(void) {
-            // gl_Position = uProjectionMatrix * ModelViewMatrix * aVertexPosition;
-            // gl_Position = aVertexPosition;
-            // vec4 transformedPosition = transformationMatrix * vec4(coordinates.xy, coordinates.z * -1.0, 1.0);
-            vec4 transformedPos = transformationMatrix * vec4(coordinates.xy, coordinates.z * -1.0, 1.0);
-            vec4 projectedPos   = uProjectionMatrix * transformedPos;
-            gl_Position = projectedPos;
-            colorFactor = min(max((1.0 - transformedPos.z) / 2.0, 0.0), 1.0);
-        }
-    </script>
-    <!-- fragment-shader-3d -->
     <script id="fragment-shader-3d-flat" type="x-shader/x-fragment">
         precision mediump float;
         uniform vec3 userColor;

@@ -31,7 +31,12 @@ export const projectionMatrix = (type) => {
               0, 0, 0, 1
             ];
         case "pers":
-            return;
+            return [
+              1, 0, 0, 0,
+              0, 1, 0, 0,
+              0, 0, 1, 0,
+              0, 0, 0, 1
+            ];
     }
 
 }
