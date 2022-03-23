@@ -7,8 +7,8 @@ import { m4 } from './matUtils.js';
 function getInitialTransformMatrix() {
     var transformMatrix = translationMatrix(0, 0, 0); // Just empty matrix
     var translation = [0, 0, 0];
-    var scale       = [0.8, 0.8, 0.8];
-    var rotation    = [0, 0, 0];
+    var scale = [0.8, 0.8, 0.8];
+    var rotation = [0, 0, 0];
 
     transformMatrix = matrixMult(scaleMatrix(scale[0], scale[1], scale[2]), transformMatrix);
     transformMatrix = matrixMult(translationMatrix(translation[0], translation[1], translation[2]), transformMatrix);
@@ -30,15 +30,15 @@ function main() {
             return;
         }
 
-        var reader    = new FileReader();
-        reader.onload = function(e) {
-          model = parserObjFile(e.target.result);
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            model = parserObjFile(e.target.result);
         };
         reader.readAsText(file);
     }
 
     // Add listener for reset button
-    document.getElementById("reset").addEventListener("click", function() {
+    document.getElementById("reset").addEventListener("click", function () {
         model = getHollowCube();
         transformMatrix = getInitialTransformMatrix();
 
@@ -87,7 +87,7 @@ function main() {
         trans_increment[1] = e.target.value / 100;
         transformMatrix = translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]);
         render();
-    });    
+    });
 
     document.getElementById("translasiZ").addEventListener("input", (e) => {
         trans_increment[2] = e.target.value / 100;
@@ -196,6 +196,15 @@ function main() {
         //console.log(up[2]);
     };
 
+    // Reset button
+    document.getElementById("resetButton").addEventListener("click", () => {
+        rot_increment = [0, 0, 0];
+        trans_increment = [0, 0, 0];
+        scale_increment = [0.8, 0.8, 0.8];
+        transformMatrix = getInitialTransformMatrix();
+        render();
+    });
+
     function callbackModel(e) {
         var selectedModelRadio = document.querySelector("input[name='bentuk']:checked").value;
         switch (selectedModelRadio) {
@@ -235,7 +244,7 @@ function main() {
 
     // -- Ritual WebGL Create Program --
     const canvas = document.getElementById('canvas');
-    const gl     = canvas.getContext('webgl');
+    const gl = canvas.getContext('webgl');
 
     if (!gl) {
         alert('Browsermu jelek');
@@ -250,14 +259,14 @@ function main() {
 
     // -- Create buffer & pointer --
     var vertexBuffer = gl.createBuffer();
-    var indexBuffer  = gl.createBuffer();
+    var indexBuffer = gl.createBuffer();
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
-    var coordLoc           = gl.getAttribLocation(shaderProgram, "coordinates");
+    var coordLoc = gl.getAttribLocation(shaderProgram, "coordinates");
     var transformMatrixLoc = gl.getUniformLocation(shaderProgram, "transformationMatrix");
-    var colorLoc           = gl.getUniformLocation(shaderProgram, "userColor");
+    var colorLoc = gl.getUniformLocation(shaderProgram, "userColor");
 
     window.requestAnimationFrame(render);
 
@@ -270,9 +279,9 @@ function main() {
         // transformMatrix = rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]);
         // transformMatrix = scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]);
 
-        transformMatrix = matrixMult(transformMatrix, translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]));
-        transformMatrix = matrixMult(transformMatrix, rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]));
-        transformMatrix = matrixMult(transformMatrix, scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]));
+        // transformMatrix = matrixMult(transformMatrix, translationMatrix(trans_increment[0], trans_increment[1], trans_increment[2]));
+        // transformMatrix = matrixMult(transformMatrix, rotationMatrix(rot_increment[0], rot_increment[1], rot_increment[2]));
+        // transformMatrix = matrixMult(transformMatrix, scaleMatrix(scale_increment[0], scale_increment[1], scale_increment[2]));
 
         // Clear canvas & set states
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
