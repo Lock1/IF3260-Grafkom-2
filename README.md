@@ -2,6 +2,8 @@
 ## Minor Sidenote
 IIRC, shadow yang ada pada hasil pekerjaan tugas besar ini kurang baik, tidak ada kalkulasi proper shadow menggunakan vektor normal misalnya. Hanya terdapat satu sumber ambient light yang fall off dari jarak tertentu
 
+Why icosahedron? [Platonic solids!](https://en.wikipedia.org/wiki/Platonic_solid)
+
 ## Tips
 Untuk menghindari *insanity*, direkomendasikan untuk membuat Wavefront `.obj` file format parser. Technical specification dari `.obj` ada pada Wikipedia dan sudah cukup lengkap untuk pengerjaan tugas besar ini. Meskipun terdengar menakutkan ("membuat `.obj` parser"), file `.obj` singkatnya adalah text file dengan informasi koordinat vertex dan face, sehingga tidak terlalu susah untuk menuliskan parser, terutama jika menggunakan JavaScript. Pada repo ini sudah dicantumkan `obj-dumper` yang membaca `.obj` file dan mengkonversikannya menjadi JSON.
 
